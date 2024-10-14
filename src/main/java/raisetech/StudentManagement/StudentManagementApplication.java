@@ -1,53 +1,64 @@
 package raisetech.StudentManagement;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @SpringBootApplication
 @RestController
 public class StudentManagementApplication {
 
-  public String name = "Keita Yamao";
-  public String age = "34";
+  //第20回課題
+  //studentテーブルの情報を使ってCRUD処理を実装する。
+  //ストレッチ課題
+  //listを使って一覧表示の機能を実装する。
+
+  @Autowired
+  private StudentRepository repository;
+
   private Map<String, String> student = new HashMap<>();
 
   public static void main(String[] args) {
     SpringApplication.run(StudentManagementApplication.class, args);
   }
 
-  //nameとageをget
-  @GetMapping("/studentInfo")
-  public String getStudentInfo() {
-    return name + " " + age + "歳";
+  //生徒情報の個別表示
+  @GetMapping("/student")
+  public String getStudent(@RequestParam String name) {
+    Student student = repository.searchByName(name);
+    return student.getName() + " " + student.getAge() + "歳";
   }
 
-  //Mapをget
-  @GetMapping("/studentMap")
-  public Map<String, String> getStudentMap() {
-    return student;
+  //生徒情報のリスト表示
+  @GetMapping("/studentList")
+  public List<Student> getStudentList(){
+    return repository.getStudents();
   }
 
-  //nameとageにPost
-  @PostMapping("/studentInfo")
-  public void setStudentInfo(String name, String age) {
-    this.name = name;
-    this.age = age;
+  //生徒情報の登録
+  @PostMapping("/student")
+  public void registerStudent(String name, int age) {
+    repository.registerStudent(name, age);
   }
 
-  //nameにPost
-  @PostMapping("/studentName")
-  public void updateStudentName(String name) {
-    this.name = name;
+  //生徒情報の更新
+  @PatchMapping("/student")
+  public void updateStudent(String name, int age) {
+    repository.updateStudent(name, age);
   }
 
-  //MapにPost
-  @PostMapping("/studentMap")
-  public void addStudentMap(String name,String age) {
-    student.put(name,age);
+  //生徒情報の削除
+  @DeleteMapping("/student")
+  public void deleteStudent(String name) {
+    repository.deleteStudent(name);
   }
 }
