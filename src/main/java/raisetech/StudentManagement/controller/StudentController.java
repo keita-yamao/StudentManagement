@@ -3,6 +3,7 @@ package raisetech.StudentManagement.controller;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.studentsCourses;
@@ -20,14 +21,13 @@ public class StudentController {
 
   //生徒情報のリスト表示
   @GetMapping("/studentList")
-  public List<Student> getStudentList() {
-    return service.searchStudentList();
+  public List<Student> getStudentList(@RequestParam(defaultValue = "0") int minAge,@RequestParam(defaultValue = "130") int maxAge) {
+    return service.searchStudentList(minAge, maxAge);
   }
 
   //コース情報のリスト表示
   @GetMapping("/courseList")
-  public List<studentsCourses> getCourseList() {
-    return service.searchCourseList();
+  public List<studentsCourses> getCourseList(@RequestParam String courseId) {
+    return service.searchCourseList(courseId);
   }
-
 }

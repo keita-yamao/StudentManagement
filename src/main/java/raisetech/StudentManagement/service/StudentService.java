@@ -19,18 +19,18 @@ public class StudentService {
   }
 
   //生徒情報のリスト表示
-  public List<Student> searchStudentList() {
+  public List<Student> searchStudentList(int minAge,int maxAge) {
     List<Student> studentList = repository.studentSearch();
     return studentList.stream()
-        .filter(student -> student.getAge() >= 30 && student.getAge() < 40)
+        .filter(student -> student.getAge() >= minAge && student.getAge() <= maxAge)
         .collect(Collectors.toList());
   }
 
   //コース情報のリスト表示
-  public List<studentsCourses> searchCourseList() {
+  public List<studentsCourses> searchCourseList(String courseId) {
     List<studentsCourses> courseList = repository.courseSearch();
     return courseList.stream()
-        .filter(studentsCourses -> studentsCourses.getCourseId().equals("00001"))
+        .filter(studentsCourses -> studentsCourses.getCourseId().equals(courseId))
         .collect(Collectors.toList());
   }
 }
