@@ -2,9 +2,11 @@ package raisetech.StudentManagement.data;
 
 import java.sql.Date;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
-public class studentsCourses {
+@Setter
+public class StudentsCourses {
 
   private String studentId;
   private String courseId;

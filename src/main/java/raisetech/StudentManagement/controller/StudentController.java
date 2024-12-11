@@ -6,29 +6,36 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import raisetech.StudentManagement.controller.conberter.StudentConverter;
 import raisetech.StudentManagement.data.Student;
-import raisetech.StudentManagement.data.studentsCourses;
+import raisetech.StudentManagement.data.StudentsCourses;
+import raisetech.StudentManagement.domein.StudentDetail;
 import raisetech.StudentManagement.service.StudentService;
 
 @RestController
 public class StudentController {
 
   private final StudentService service;
+  private final StudentConverter converter;
 
   @Autowired
-  private StudentController(StudentService service) {
+  private StudentController(StudentService service, StudentConverter converter) {
     this.service = service;
+    this.converter = converter;
   }
 
   //生徒情報のリスト表示
   @GetMapping("/studentList")
-  public List<Student> getStudentList(@RequestParam(defaultValue = "0") int minAge,@RequestParam(defaultValue = "130") int maxAge) {
-    return service.searchStudentList(minAge, maxAge);
+  public List<StudentDetail> getStudentList(@RequestParam(defaultValue = "0") int minAge,
+      @RequestParam(defaultValue = "130") int maxAge, @RequestParam String courseId) {
+    List<Student> students = service.searchStudentList(minAge, maxAge);
+    List<StudentsCourses> studentsCourses = service.searchCourseList(courseId);
+    return converter.studentDetails(students, studentsCourses);
   }
 
   //コース情報のリスト表示
   @GetMapping("/courseList/{courseId}")
-  public List<studentsCourses> getCourseList(@PathVariable String courseId) {
+  public List<StudentsCourses> getCourseList(@PathVariable String courseId) {
     return service.searchCourseList(courseId);
   }
 }
