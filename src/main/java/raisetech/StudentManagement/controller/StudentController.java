@@ -34,8 +34,8 @@ public class StudentController {
   }
 
   //コース情報のリスト表示
-  @GetMapping("/courseList/{courseId}")
-  public List<StudentsCourses> getCourseList(@PathVariable String courseId) {
+  @GetMapping("/courseList")
+  public List<StudentsCourses> getCourseList(@RequestParam String courseId) {
     return service.searchCourseList(courseId);
   }
 }
