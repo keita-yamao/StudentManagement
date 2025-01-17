@@ -2,8 +2,9 @@ package raisetech.StudentManagement.controller;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import raisetech.StudentManagement.controller.conberter.StudentConverter;
@@ -12,7 +13,7 @@ import raisetech.StudentManagement.data.StudentsCourses;
 import raisetech.StudentManagement.domein.StudentDetail;
 import raisetech.StudentManagement.service.StudentService;
 
-@RestController
+@Controller
 public class StudentController {
 
   private final StudentService service;
@@ -26,11 +27,13 @@ public class StudentController {
 
   //生徒情報のリスト表示
   @GetMapping("/studentList")
-  public List<StudentDetail> getStudentList(@RequestParam(defaultValue = "0") int minAge,
-      @RequestParam(defaultValue = "130") int maxAge, @RequestParam String courseId) {
+  public String getStudentList(Model model,@RequestParam(defaultValue = "0") int minAge,
+      @RequestParam(defaultValue = "130") int maxAge, @RequestParam(defaultValue = "00001") String courseId) {
     List<Student> students = service.searchStudentList(minAge, maxAge);
     List<StudentsCourses> studentsCourses = service.searchCourseList(courseId);
-    return converter.studentDetails(students, studentsCourses);
+
+    model.addAttribute("studentList",converter.studentDetails(students, studentsCourses));
+    return "studentList";
   }
 
   //コース情報のリスト表示
