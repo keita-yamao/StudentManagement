@@ -4,10 +4,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 import raisetech.StudentManagement.controller.conberter.StudentConverter;
+import raisetech.StudentManagement.data.Course;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentsCourses;
 import raisetech.StudentManagement.domein.StudentDetail;
@@ -27,18 +30,42 @@ public class StudentController {
 
   //生徒情報のリスト表示
   @GetMapping("/studentList")
-  public String getStudentList(Model model,@RequestParam(defaultValue = "0") int minAge,
-      @RequestParam(defaultValue = "130") int maxAge, @RequestParam(defaultValue = "00001") String courseId) {
+  public String getStudentList(Model model, @RequestParam(defaultValue = "0") int minAge,
+      @RequestParam(defaultValue = "130") int maxAge, String courseId) {
     List<Student> students = service.searchStudentList(minAge, maxAge);
-    List<StudentsCourses> studentsCourses = service.searchCourseList(courseId);
-
-    model.addAttribute("studentList",converter.studentDetails(students, studentsCourses));
+    List<Course> courses = service.searchCourseList();
+    if (courseId == null) {
+      List<StudentsCourses> studentsCourses = service.searchAllStudentCourseList();
+      model.addAttribute("studentList",
+          converter.studentDetails(students, studentsCourses, courses));
+    } else {
+      List<StudentsCourses> studentsCourses = service.searchStudentCourseList(courseId);
+      model.addAttribute("studentList",
+          converter.studentDetails(students, studentsCourses, courses));
+    }
     return "studentList";
   }
 
   //コース情報のリスト表示
   @GetMapping("/courseList")
   public List<StudentsCourses> getCourseList(@RequestParam String courseId) {
-    return service.searchCourseList(courseId);
+    return service.searchStudentCourseList(courseId);
+  }
+
+  //生徒情報の登録処理のオブジェクト作成
+  @GetMapping("/newStudent")
+  public String newStudent(Model model) {
+    model.addAttribute("studentDetail", new StudentDetail());
+    return "registerStudent";
+  }
+
+  //生徒情報の登録処理
+  @PostMapping("/registerStudent")
+  public String registerStudent(@ModelAttribute StudentDetail studentDetail, BindingResult result) {
+    if (result.hasErrors()) {
+      return "registerStudent";
+    }
+    service.addStudent(studentDetail);
+    return "redirect:/studentList";
   }
 }
