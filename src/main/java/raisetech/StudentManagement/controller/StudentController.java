@@ -9,10 +9,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import raisetech.StudentManagement.controller.conberter.StudentConverter;
+import raisetech.StudentManagement.controller.converter.StudentConverter;
 import raisetech.StudentManagement.data.Course;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentsCourses;
+import raisetech.StudentManagement.domein.CourseDetail;
 import raisetech.StudentManagement.domein.StudentDetail;
 import raisetech.StudentManagement.service.StudentService;
 
@@ -31,18 +32,14 @@ public class StudentController {
   //生徒情報のリスト表示
   @GetMapping("/studentList")
   public String getStudentList(Model model, @RequestParam(defaultValue = "0") int minAge,
-      @RequestParam(defaultValue = "130") int maxAge, String courseId) {
+      @RequestParam(defaultValue = "130") int maxAge,
+      @RequestParam(defaultValue = "") String courseId) {
     List<Student> students = service.searchStudentList(minAge, maxAge);
     List<Course> courses = service.searchCourseList();
-    if (courseId == null) {
-      List<StudentsCourses> studentsCourses = service.searchAllStudentCourseList();
-      model.addAttribute("studentList",
-          converter.studentDetails(students, studentsCourses, courses));
-    } else {
-      List<StudentsCourses> studentsCourses = service.searchStudentCourseList(courseId);
-      model.addAttribute("studentList",
-          converter.studentDetails(students, studentsCourses, courses));
-    }
+    List<StudentsCourses> studentsCourses = service.searchStudentCourseList(courseId);
+    List<CourseDetail> courseDetails = converter.courseDetails(studentsCourses, courses);
+    model.addAttribute("studentList",
+        converter.studentDetails(students, courseDetails));
     return "studentList";
   }
 

@@ -25,37 +25,34 @@ public class StudentService {
 
   //生徒情報のリスト表示
   public List<Student> searchStudentList(int minAge, int maxAge) {
-    List<Student> studentList = repository.studentSearch();
-    {
-      return studentList.stream()
-          .filter(student -> student.getAge() >= minAge && student.getAge() <= maxAge)
-          .collect(Collectors.toList());
-    }
+    List<Student> studentList = repository.searchStudent();
+    return studentList.stream()
+        .filter(student -> student.getAge() >= minAge && student.getAge() <= maxAge)
+        .collect(Collectors.toList());
   }
 
   //生徒コース情報のリスト表示
   public List<StudentsCourses> searchStudentCourseList(String courseId) {
-    List<StudentsCourses> courseList = repository.studentsCourseSearch();
-    return courseList.stream()
-        .filter(StudentsCourses -> StudentsCourses.getCourseId().equals(courseId))
-        .collect(Collectors.toList());
-  }
-
-  //生徒コース情報の全件表示
-  public List<StudentsCourses> searchAllStudentCourseList() {
-    return repository.studentsCourseSearch();
+    List<StudentsCourses> studentsCourseList = repository.searchStudentsCourses();
+    if (courseId.isEmpty()) {
+      return studentsCourseList;
+    } else {
+      return studentsCourseList.stream()
+          .filter(StudentsCourses -> StudentsCourses.getCourseId().equals(courseId))
+          .collect(Collectors.toList());
+    }
   }
 
   //コースの全件検索
   public List<Course> searchCourseList() {
-    return repository.coursesSearch();
+    return repository.searchCourses();
   }
 
   //生徒情報の新規追加
   public void addStudent(StudentDetail studentDetail) {
     //生徒情報と受講コースの両方で使用するもの
     //生徒IDの決定
-    List<Student> studentList = repository.studentSearch();
+    List<Student> studentList = repository.searchStudent();
     String studentId = Integer.toString(studentList.size() + 1);
 
     //生徒情報追加に関する処理
@@ -66,7 +63,7 @@ public class StudentService {
     //論理削除フラグをset
     student.setDeleted(false);
     //studentsテーブルに追加
-    repository.studentInsert(student);
+    repository.insertStudent(student);
 
     //受講コースの追加に関する処理
     List<CourseDetail> courseDetails = studentDetail.getCourseDetail();
@@ -84,7 +81,7 @@ public class StudentService {
       //終了日をset
       studentsCourses.setExpectedCompletionDate(Date.valueOf(expectedCompletionDate));
       //students_coursesテーブルに追加
-      repository.studentCourseInsert(studentsCourses);
+      repository.insertStudentCourse(studentsCourses);
     }
   }
 }
