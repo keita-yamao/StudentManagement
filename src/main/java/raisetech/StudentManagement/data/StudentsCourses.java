@@ -11,7 +11,6 @@ public class StudentsCourses {
   private int id;
   private String studentId;
   private String courseId;
-  private String course;
   private Date startDate;
   private Date expectedCompletionDate;
 
