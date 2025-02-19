@@ -1,6 +1,7 @@
 package raisetech.StudentManagement.controller;
 
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -49,11 +50,19 @@ public class StudentController {
     return service.searchStudentCourseList(courseId);
   }
 
-  //生徒情報の登録処理のオブジェクト作成
+  //生徒情報の登録処理画面への遷移
   @GetMapping("/newStudent")
   public String newStudent(Model model) {
     model.addAttribute("studentDetail", new StudentDetail());
     return "registerStudent";
+  }
+
+  //生徒情報の変更処理画面への遷移
+  @GetMapping("/editStudent")
+  public String editStudent(Model model, @RequestParam String studentId) {
+    Optional<Student> student = service.searchStudent(studentId);
+    student.ifPresent(value -> model.addAttribute("student", value));
+    return "updateStudent";
   }
 
   //生徒情報の登録処理
@@ -63,6 +72,16 @@ public class StudentController {
       return "registerStudent";
     }
     service.addStudent(studentDetail);
+    return "redirect:/studentList";
+  }
+
+  //生徒情報の更新処理
+  @PostMapping("/updateStudent")
+  public String updateStudent(@ModelAttribute Student student, BindingResult result) {
+    if (result.hasErrors()) {
+      return "updateStudent";
+    }
+    service.updateStudent(student);
     return "redirect:/studentList";
   }
 }

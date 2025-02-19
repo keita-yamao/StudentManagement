@@ -3,6 +3,7 @@ package raisetech.StudentManagement.service;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,14 @@ public class StudentService {
     return studentList.stream()
         .filter(student -> student.getAge() >= minAge && student.getAge() <= maxAge)
         .collect(Collectors.toList());
+  }
+
+  //studentIdから生徒情報の表示
+  public Optional<Student> searchStudent(String studentId) {
+    List<Student> studentList = repository.searchStudent();
+    return studentList.stream()
+        .filter(student -> student.getStudentId().equals(studentId))
+        .findFirst();
   }
 
   //生徒コース情報のリスト表示
@@ -83,5 +92,10 @@ public class StudentService {
       //students_coursesテーブルに追加
       repository.insertStudentCourse(studentsCourses);
     }
+  }
+
+  //生徒情報の変更
+  public void updateStudent(Student student) {
+    repository.updateStudent(student);
   }
 }
