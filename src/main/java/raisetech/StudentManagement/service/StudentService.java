@@ -3,7 +3,6 @@ package raisetech.StudentManagement.service;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,11 +32,11 @@ public class StudentService {
   }
 
   //studentIdから生徒情報の表示
-  public Optional<Student> searchStudent(String studentId) {
+  public Student searchStudent(String studentId) {
     List<Student> studentList = repository.searchStudent();
     return studentList.stream()
         .filter(student -> student.getStudentId().equals(studentId))
-        .findFirst();
+        .findFirst().orElseGet(Student::new);
   }
 
   //生徒コース情報のリスト表示

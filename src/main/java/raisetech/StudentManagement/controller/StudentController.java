@@ -1,7 +1,6 @@
 package raisetech.StudentManagement.controller;
 
 import java.util.List;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -60,8 +59,8 @@ public class StudentController {
   //生徒情報の変更処理画面への遷移
   @GetMapping("/editStudent")
   public String editStudent(Model model, @RequestParam String studentId) {
-    Optional<Student> student = service.searchStudent(studentId);
-    student.ifPresent(value -> model.addAttribute("student", value));
+    Student student = service.searchStudent(studentId);
+    model.addAttribute("student", student);
     return "updateStudent";
   }
 
