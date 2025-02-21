@@ -41,6 +41,9 @@
       </table>
     </td>
     <td th:text="${studentDetail.student.remark}">特になし</td>
+    <td>
+      <a th:href="@{/editStudent(studentId=${studentDetail.student.studentId})}">編集</a>
+    </td>
   </tr>
   </tbody>
 </table>

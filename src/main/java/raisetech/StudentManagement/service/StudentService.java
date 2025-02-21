@@ -31,6 +31,14 @@ public class StudentService {
         .collect(Collectors.toList());
   }
 
+  //studentIdから生徒情報の表示
+  public Student searchStudent(String studentId) {
+    List<Student> studentList = repository.searchStudent();
+    return studentList.stream()
+        .filter(student -> student.getStudentId().equals(studentId))
+        .findFirst().orElseGet(Student::new);
+  }
+
   //生徒コース情報のリスト表示
   public List<StudentsCourses> searchStudentCourseList(String courseId) {
     List<StudentsCourses> studentsCourseList = repository.searchStudentsCourses();
@@ -83,5 +91,10 @@ public class StudentService {
       //students_coursesテーブルに追加
       repository.insertStudentCourse(studentsCourses);
     }
+  }
+
+  //生徒情報の変更
+  public void updateStudent(Student student) {
+    repository.updateStudent(student);
   }
 }
