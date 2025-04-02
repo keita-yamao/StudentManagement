@@ -2,6 +2,7 @@ package raisetech.StudentManagement.service;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,18 @@ public class StudentService {
         .findFirst().orElseGet(Student::new);
   }
 
+  //studentIdから受講コース情報の表示
+  public List<StudentsCourses> studentsCourses(String studentId) {
+    List<StudentsCourses> studentsCoursesList = repository.searchStudentsCourses();
+    List<StudentsCourses> studentsCourses = new ArrayList<>();
+    for (StudentsCourses studentsCourse : studentsCoursesList) {
+      if (studentsCourse.getStudentId().equals(studentId)) {
+        studentsCourses.add(studentsCourse);
+      }
+    }
+    return studentsCourses;
+  }
+
   //生徒コース情報のリスト表示
   public List<StudentsCourses> searchStudentCourseList(String courseId) {
     List<StudentsCourses> studentsCourseList = repository.searchStudentsCourses();
@@ -57,6 +70,7 @@ public class StudentService {
   }
 
   //生徒情報の新規追加
+  //@Transactional
   public void addStudent(StudentDetail studentDetail) {
     //生徒情報と受講コースの両方で使用するもの
     //生徒IDの決定
@@ -94,7 +108,14 @@ public class StudentService {
   }
 
   //生徒情報の変更
-  public void updateStudent(Student student) {
+  // @Transactional
+  public void updateStudent(StudentDetail studentDetail) {
+    Student student = studentDetail.getStudent();
     repository.updateStudent(student);
+    List<CourseDetail> courseDetails = studentDetail.getCourseDetail();
+    for (CourseDetail courseDetail : courseDetails) {
+      StudentsCourses studentsCourses = courseDetail.getStudentsCourses();
+      repository.updateStudentCourses(studentsCourses);
+    }
   }
 }
