@@ -2,10 +2,12 @@ package raisetech.StudentManagement.service;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import raisetech.StudentManagement.data.Course;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentsCourses;
@@ -19,7 +21,7 @@ public class StudentService {
   private final StudentRepository repository;
 
   @Autowired
-  private StudentService(StudentRepository repository) {
+  public StudentService(StudentRepository repository) {
     this.repository = repository;
   }
 
@@ -37,6 +39,18 @@ public class StudentService {
     return studentList.stream()
         .filter(student -> student.getStudentId().equals(studentId))
         .findFirst().orElseGet(Student::new);
+  }
+
+  //studentIdから受講コース情報の表示
+  public List<StudentsCourses> studentsCourses(String studentId) {
+    List<StudentsCourses> studentsCoursesList = repository.searchStudentsCourses();
+    List<StudentsCourses> studentsCourses = new ArrayList<>();
+    for (StudentsCourses studentsCourse : studentsCoursesList) {
+      if (studentsCourse.getStudentId().equals(studentId)) {
+        studentsCourses.add(studentsCourse);
+      }
+    }
+    return studentsCourses;
   }
 
   //生徒コース情報のリスト表示
@@ -57,6 +71,7 @@ public class StudentService {
   }
 
   //生徒情報の新規追加
+  @Transactional
   public void addStudent(StudentDetail studentDetail) {
     //生徒情報と受講コースの両方で使用するもの
     //生徒IDの決定
@@ -94,7 +109,14 @@ public class StudentService {
   }
 
   //生徒情報の変更
-  public void updateStudent(Student student) {
+  @Transactional
+  public void updateStudent(StudentDetail studentDetail) {
+    Student student = studentDetail.getStudent();
     repository.updateStudent(student);
+    List<CourseDetail> courseDetails = studentDetail.getCourseDetail();
+    for (CourseDetail courseDetail : courseDetails) {
+      StudentsCourses studentsCourses = courseDetail.getStudentsCourses();
+      repository.updateStudentCourses(studentsCourses);
+    }
   }
 }

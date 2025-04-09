@@ -59,8 +59,17 @@ public class StudentController {
   //生徒情報の変更処理画面への遷移
   @GetMapping("/editStudent")
   public String editStudent(Model model, @RequestParam String studentId) {
+    //登録データをオブジェクトに格納
     Student student = service.searchStudent(studentId);
-    model.addAttribute("student", student);
+    List<StudentsCourses> studentsCourses = service.studentsCourses(studentId);
+    List<Course> courses = service.searchCourseList();
+    //データの整形
+    List<CourseDetail> courseDetails = converter.courseDetails(studentsCourses, courses);
+    StudentDetail studentDetail = new StudentDetail(student, courseDetails);
+    //モデルへ紐づけ
+    model.addAttribute("studentDetail", studentDetail);
+    model.addAttribute("courses", courses);
+    //テンプレートファイルへリターン
     return "updateStudent";
   }
 
@@ -76,11 +85,11 @@ public class StudentController {
 
   //生徒情報の更新処理
   @PostMapping("/updateStudent")
-  public String updateStudent(@ModelAttribute Student student, BindingResult result) {
+  public String updateStudent(@ModelAttribute StudentDetail studentDetail, BindingResult result) {
     if (result.hasErrors()) {
       return "updateStudent";
     }
-    service.updateStudent(student);
+    service.updateStudent(studentDetail);
     return "redirect:/studentList";
   }
 }
