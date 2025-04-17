@@ -57,5 +57,11 @@
     <button type="submit">更新</button>
   </div>
 </form>
+<form th:action="@{/confirmDeletion(studentId=${studentDetail.student.studentId})}" method="post">
+  <button type="submit">削除</button>
+</form>
+<form th:action="@{/studentList}" method="get">
+  <button type="submit">一覧に戻る</button>
+</form>
 </body>
 </html>

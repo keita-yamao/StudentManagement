@@ -38,4 +38,8 @@ public interface StudentRepository {
 
   @Update("UPDATE students_courses SET course_id=#{courseId} WHERE id=#{id}")
   void updateStudentCourses(StudentsCourses studentsCourses);
+
+  @Update(
+      "UPDATE students SET is_deleted =#{isDeleted} WHERE student_id=#{studentId}")
+  void deleteStudent(Student student);
 }

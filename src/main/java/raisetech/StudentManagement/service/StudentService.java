@@ -29,7 +29,8 @@ public class StudentService {
   public List<Student> searchStudentList(int minAge, int maxAge) {
     List<Student> studentList = repository.searchStudent();
     return studentList.stream()
-        .filter(student -> student.getAge() >= minAge && student.getAge() <= maxAge)
+        .filter(student -> student.getAge() >= minAge && student.getAge() <= maxAge
+            && !student.isDeleted())
         .collect(Collectors.toList());
   }
 
@@ -111,12 +112,24 @@ public class StudentService {
   //生徒情報の変更
   @Transactional
   public void updateStudent(StudentDetail studentDetail) {
+    //引数からを生徒情報をオブジェクトにセット
     Student student = studentDetail.getStudent();
+    //生徒情報の更新処理
     repository.updateStudent(student);
+    //引数から受講コース情報をオブジェクトにセット
     List<CourseDetail> courseDetails = studentDetail.getCourseDetail();
+    //受講コース情報の更新処理
     for (CourseDetail courseDetail : courseDetails) {
       StudentsCourses studentsCourses = courseDetail.getStudentsCourses();
       repository.updateStudentCourses(studentsCourses);
     }
+  }
+
+  @Transactional
+  public void deleteStudent(Student student) {
+    //削除フラグを立てる
+    student.setDeleted(true);
+    //生徒情報削除の処理
+    repository.deleteStudent(student);
   }
 }
