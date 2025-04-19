@@ -17,4 +17,13 @@ public class Student {
   private String gender;
   private String remark;
   private boolean isDeleted;
+
+
+  public void delete() {
+    this.isDeleted = true;
+  }
+
+  public void undelete() {
+    this.isDeleted = false;
+  }
 }

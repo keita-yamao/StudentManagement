@@ -85,7 +85,7 @@ public class StudentService {
     //生徒IDのset
     student.setStudentId(studentId);
     //論理削除フラグをset
-    student.setDeleted(false);
+    student.undelete();
     //studentsテーブルに追加
     repository.insertStudent(student);
 
@@ -128,8 +128,8 @@ public class StudentService {
   @Transactional
   public void deleteStudent(Student student) {
     //削除フラグを立てる
-    student.setDeleted(true);
+    student.delete();
     //生徒情報削除の処理
-    repository.deleteStudent(student);
+    repository.updateStudent(student);
   }
 }
