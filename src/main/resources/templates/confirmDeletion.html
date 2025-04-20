@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html" lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>受講生一覧</title>
+</head>
+<body>
+<h1>受講生情報の削除</h1>
+<p>受講生情報を削除してよろしいですか？</p>
+<table border="1">
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>名前</th>
+    <th>ふりがな</th>
+    <th>ニックネーム</th>
+    <th>メールアドレス</th>
+    <th>地域</th>
+    <th>年齢</th>
+    <th>性別</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:object="${student}">
+    <td th:text="*{studentId}">1</td>
+    <td th:text="*{name}">山田太郎</td>
+    <td th:text="*{furigana}">ヤマダタロウ</td>
+    <td th:text="*{nickname}">タロー</td>
+    <td th:text="*{email}">taro@example.com</td>
+    <td th:text="*{address}">東京</td>
+    <td th:text="*{age}">28</td>
+    <td th:text="*{gender}">男性</td>
+  </tbody>
+</table>
+<form th:action="@{/deleteStudent(studentId=${student.studentId})}" method="post">
+  <button type="submit">削除</button>
+</form>
+<form th:action="@{/studentList}" method="get">
+  <button type="submit">キャンセル</button>
+</form>
+</body>
+</html>

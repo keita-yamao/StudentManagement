@@ -34,12 +34,15 @@ public class StudentController {
   public String getStudentList(Model model, @RequestParam(defaultValue = "0") int minAge,
       @RequestParam(defaultValue = "130") int maxAge,
       @RequestParam(defaultValue = "") String courseId) {
+    //登録データをオブジェクトに格納
     List<Student> students = service.searchStudentList(minAge, maxAge);
     List<Course> courses = service.searchCourseList();
     List<StudentsCourses> studentsCourses = service.searchStudentCourseList(courseId);
     List<CourseDetail> courseDetails = converter.courseDetails(studentsCourses, courses);
+    //モデルへ紐づけ
     model.addAttribute("studentList",
         converter.studentDetails(students, courseDetails));
+    //テンプレートファイルへリターン
     return "studentList";
   }
 
@@ -90,6 +93,27 @@ public class StudentController {
       return "updateStudent";
     }
     service.updateStudent(studentDetail);
+    return "redirect:/studentList";
+  }
+
+  //生徒情報削除の確認画面への遷移
+  @PostMapping("/confirmDeletion")
+  public String confirmDeletion(Model model, @RequestParam String studentId) {
+    //登録データをオブジェクトに格納
+    Student student = service.searchStudent(studentId);
+    //モデルへの紐づけ
+    model.addAttribute("student", student);
+    //テンプレートファイルへリターン
+    return "confirmDeletion";
+  }
+
+  //生徒情報の削除処理
+  @PostMapping("/deleteStudent")
+  public String deleteStudent(@RequestParam String studentId) {
+    //studentIdから登録データをオブジェクトに格納
+    Student student = service.searchStudent(studentId);
+    //削除処理
+    service.deleteStudent(student);
     return "redirect:/studentList";
   }
 }
