@@ -2,13 +2,15 @@ package raisetech.StudentManagement.controller;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import raisetech.StudentManagement.controller.converter.StudentConverter;
 import raisetech.StudentManagement.data.Course;
 import raisetech.StudentManagement.data.Student;
@@ -17,7 +19,7 @@ import raisetech.StudentManagement.domein.CourseDetail;
 import raisetech.StudentManagement.domein.StudentDetail;
 import raisetech.StudentManagement.service.StudentService;
 
-@Controller
+@RestController
 public class StudentController {
 
   private final StudentService service;
@@ -31,7 +33,7 @@ public class StudentController {
 
   //生徒情報のリスト表示
   @GetMapping("/studentList")
-  public String getStudentList(Model model, @RequestParam(defaultValue = "0") int minAge,
+  public List<StudentDetail> getStudentList(@RequestParam(defaultValue = "0") int minAge,
       @RequestParam(defaultValue = "130") int maxAge,
       @RequestParam(defaultValue = "") String courseId) {
     //登録データをオブジェクトに格納
@@ -39,11 +41,8 @@ public class StudentController {
     List<Course> courses = service.searchCourseList();
     List<StudentsCourses> studentsCourses = service.searchStudentCourseList(courseId);
     List<CourseDetail> courseDetails = converter.courseDetails(studentsCourses, courses);
-    //モデルへ紐づけ
-    model.addAttribute("studentList",
-        converter.studentDetails(students, courseDetails));
-    //テンプレートファイルへリターン
-    return "studentList";
+    //リターン
+    return converter.studentDetails(students, courseDetails);
   }
 
   //コース情報のリスト表示
@@ -88,12 +87,9 @@ public class StudentController {
 
   //生徒情報の更新処理
   @PostMapping("/updateStudent")
-  public String updateStudent(@ModelAttribute StudentDetail studentDetail, BindingResult result) {
-    if (result.hasErrors()) {
-      return "updateStudent";
-    }
+  public ResponseEntity<String> updateStudent(@RequestBody StudentDetail studentDetail) {
     service.updateStudent(studentDetail);
-    return "redirect:/studentList";
+    return ResponseEntity.ok("更新処理が成功しました。");
   }
 
   //生徒情報削除の確認画面への遷移
