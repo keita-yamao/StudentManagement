@@ -16,7 +16,6 @@ import raisetech.StudentManagement.service.StudentService;
 /**
  * 受講生の検索や登録、更新などを行うREST APIとして受け付けるコントローラークラス
  */
-
 @RestController
 public class StudentController {
 
@@ -62,7 +61,7 @@ public class StudentController {
   /**
    * 新規受講生情報の登録処理
    *
-   * @param studentDetail 登録する受講生情報の入ったオブジェクト
+   * @param studentDetail 登録する受講生詳細情報の入ったオブジェクト
    * @return 登録された受講生情報の入ったオブジェクトを返す
    */
   @PostMapping("/registerStudent")
