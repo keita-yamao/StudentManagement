@@ -3,21 +3,19 @@ package raisetech.StudentManagement.controller;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import raisetech.StudentManagement.controller.converter.StudentConverter;
 import raisetech.StudentManagement.data.Course;
 import raisetech.StudentManagement.data.Student;
-import raisetech.StudentManagement.data.StudentsCourses;
-import raisetech.StudentManagement.domein.CourseDetail;
 import raisetech.StudentManagement.domein.StudentDetail;
 import raisetech.StudentManagement.service.StudentService;
+
+/**
+ * 受講生の検索や登録、更新などを行うREST APIとして受け付けるコントローラークラス
+ */
 
 @RestController
 public class StudentController {
@@ -25,91 +23,78 @@ public class StudentController {
   private final StudentService service;
   private final StudentConverter converter;
 
+  /**
+   * コンストラクタ
+   *
+   * @param service   　受講生サービス
+   * @param converter 　受講生コンバーター
+   */
   @Autowired
   private StudentController(StudentService service, StudentConverter converter) {
     this.service = service;
     this.converter = converter;
   }
 
-  //生徒情報のリスト表示
+  /**
+   * 受講生詳細情報一覧の全件検索
+   *
+   * @return 受講生詳細情報一覧(全件)
+   */
   @GetMapping("/studentList")
-  public List<StudentDetail> getStudentList(@RequestParam(defaultValue = "0") int minAge,
-      @RequestParam(defaultValue = "130") int maxAge,
-      @RequestParam(defaultValue = "") String courseId) {
-    //登録データをオブジェクトに格納
-    List<Student> students = service.searchStudentList(minAge, maxAge);
-    List<Course> courses = service.searchCourseList();
-    List<StudentsCourses> studentsCourses = service.searchStudentCourseList(courseId);
-    List<CourseDetail> courseDetails = converter.courseDetails(studentsCourses, courses);
-    //リターン
-    return converter.studentDetails(students, courseDetails);
+  public List<StudentDetail> getStudentDetailList() {
+    return service.searchStudentDetailList();
   }
 
-  //コース情報のリスト表示
+  //todo:受講生詳細情報一覧をstudentIdを指定して検索するメソッドを作成する。
+
+  //todo:受講生詳細情報一覧をフィルタリング(削除済み・年齢・受講コース)して表示するメソッドを作成する。
+
+  /**
+   * コース一覧の全件検索
+   *
+   * @return コース一覧(全件)
+   */
   @GetMapping("/courseList")
-  public List<StudentsCourses> getCourseList(@RequestParam String courseId) {
-    return service.searchStudentCourseList(courseId);
+  public List<Course> getCourseList() {
+    return service.searchCourseList();
   }
 
-  //生徒情報の登録処理画面への遷移
-  @GetMapping("/newStudent")
-  public String newStudent(Model model) {
-    model.addAttribute("studentDetail", new StudentDetail());
-    return "registerStudent";
-  }
-
-  //生徒情報の変更処理画面への遷移
-  @GetMapping("/editStudent")
-  public String editStudent(Model model, @RequestParam String studentId) {
-    //登録データをオブジェクトに格納
-    Student student = service.searchStudent(studentId);
-    List<StudentsCourses> studentsCourses = service.studentsCourses(studentId);
-    List<Course> courses = service.searchCourseList();
-    //データの整形
-    List<CourseDetail> courseDetails = converter.courseDetails(studentsCourses, courses);
-    StudentDetail studentDetail = new StudentDetail(student, courseDetails);
-    //モデルへ紐づけ
-    model.addAttribute("studentDetail", studentDetail);
-    model.addAttribute("courses", courses);
-    //テンプレートファイルへリターン
-    return "updateStudent";
-  }
-
-  //生徒情報の登録処理
+  /**
+   * 新規受講生情報の登録処理
+   *
+   * @param studentDetail 登録する受講生情報の入ったオブジェクト
+   * @return 登録された受講生情報の入ったオブジェクトを返す
+   */
   @PostMapping("/registerStudent")
-  public String registerStudent(@ModelAttribute StudentDetail studentDetail, BindingResult result) {
-    if (result.hasErrors()) {
-      return "registerStudent";
-    }
-    service.addStudent(studentDetail);
-    return "redirect:/studentList";
+  public ResponseEntity<StudentDetail> registerStudent(@RequestBody StudentDetail studentDetail) {
+    StudentDetail responseStudentDetail = service.addStudent(studentDetail);
+    return ResponseEntity.ok(responseStudentDetail);
   }
 
-  //生徒情報の更新処理
+  /**
+   * 受講生情報の更新処理
+   *
+   * @param studentDetail 更新する受講生情報の入ったオブジェクト
+   * @return 更新処理が完了したメッセージの文字列
+   */
   @PostMapping("/updateStudent")
   public ResponseEntity<String> updateStudent(@RequestBody StudentDetail studentDetail) {
     service.updateStudent(studentDetail);
     return ResponseEntity.ok("更新処理が成功しました。");
   }
 
-  //生徒情報削除の確認画面への遷移
-  @PostMapping("/confirmDeletion")
-  public String confirmDeletion(Model model, @RequestParam String studentId) {
-    //登録データをオブジェクトに格納
-    Student student = service.searchStudent(studentId);
-    //モデルへの紐づけ
-    model.addAttribute("student", student);
-    //テンプレートファイルへリターン
-    return "confirmDeletion";
-  }
-
-  //生徒情報の削除処理
+  /**
+   * 受講生一覧の削除処理
+   *
+   * @param studentId 受講生ID
+   * @return 削除処理が完了したメッセージの文字列
+   */
   @PostMapping("/deleteStudent")
-  public String deleteStudent(@RequestParam String studentId) {
+  public ResponseEntity<String> deleteStudent(@RequestBody String studentId) {
     //studentIdから登録データをオブジェクトに格納
-    Student student = service.searchStudent(studentId);
+    Student student = service.searchStudentById(studentId);
     //削除処理
     service.deleteStudent(student);
-    return "redirect:/studentList";
+    return ResponseEntity.ok("削除処理が成功しました。");
   }
 }
