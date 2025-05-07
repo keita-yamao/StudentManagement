@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import raisetech.StudentManagement.controller.converter.StudentConverter;
+import raisetech.StudentManagement.controller.dto.ResponseDeleteStudent;
+import raisetech.StudentManagement.controller.dto.ResponseRegisterStudent;
+import raisetech.StudentManagement.controller.dto.ResponseUpdateStudent;
 import raisetech.StudentManagement.data.Course;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.domein.StudentDetail;
@@ -65,9 +68,13 @@ public class StudentController {
    * @return 登録された受講生情報の入ったオブジェクトを返す
    */
   @PostMapping("/registerStudent")
-  public ResponseEntity<StudentDetail> registerStudent(@RequestBody StudentDetail studentDetail) {
-    StudentDetail responseStudentDetail = service.addStudent(studentDetail);
-    return ResponseEntity.ok(responseStudentDetail);
+  public ResponseEntity<ResponseRegisterStudent> registerStudent(
+      @RequestBody StudentDetail studentDetail) {
+    //登録処理
+    service.addStudent(studentDetail);
+    //DTOオブジェクトに登録処理情報を格納
+    ResponseRegisterStudent responseRegisterStudent = new ResponseRegisterStudent(studentDetail);
+    return ResponseEntity.ok(responseRegisterStudent);
   }
 
   /**
@@ -77,23 +84,29 @@ public class StudentController {
    * @return 更新処理が完了したメッセージの文字列
    */
   @PostMapping("/updateStudent")
-  public ResponseEntity<String> updateStudent(@RequestBody StudentDetail studentDetail) {
+  public ResponseEntity<ResponseUpdateStudent> updateStudent(
+      @RequestBody StudentDetail studentDetail) {
+    //更新処理
     service.updateStudent(studentDetail);
-    return ResponseEntity.ok("更新処理が成功しました。");
+    //DTOオブジェクトに更新処理情報を格納
+    ResponseUpdateStudent responseUpdateStudent = new ResponseUpdateStudent(studentDetail);
+    return ResponseEntity.ok(responseUpdateStudent);
   }
 
   /**
    * 受講生一覧の削除処理
    *
    * @param studentId 受講生ID
-   * @return 削除処理が完了したメッセージの文字列
+   * @return 削除処理が完了した受講生情報と削除メッセージのDTOを返す
    */
   @PostMapping("/deleteStudent")
-  public ResponseEntity<String> deleteStudent(@RequestBody String studentId) {
+  public ResponseEntity<ResponseDeleteStudent> deleteStudent(@RequestBody String studentId) {
     //studentIdから登録データをオブジェクトに格納
     Student student = service.searchStudentById(studentId);
     //削除処理
     service.deleteStudent(student);
-    return ResponseEntity.ok("削除処理が成功しました。");
+    //DTOオブジェクトに削除処理情報を格納
+    ResponseDeleteStudent responseDeleteStudent = new ResponseDeleteStudent(student);
+    return ResponseEntity.ok(responseDeleteStudent);
   }
 }
