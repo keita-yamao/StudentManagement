@@ -2,12 +2,12 @@ package raisetech.StudentManagement.service;
 
 import java.sql.Date;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import raisetech.StudentManagement.controller.converter.StudentConverter;
 import raisetech.StudentManagement.data.Course;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentsCourses;
@@ -15,81 +15,96 @@ import raisetech.StudentManagement.domein.CourseDetail;
 import raisetech.StudentManagement.domein.StudentDetail;
 import raisetech.StudentManagement.repository.StudentRepository;
 
+/**
+ * 受講生情報を取り扱うサービス 受講生の検索・登録・削除を行う
+ */
 @Service
 public class StudentService {
 
   private final StudentRepository repository;
+  private final StudentConverter converter;
 
+  /**
+   * コンストラクタ
+   *
+   * @param repository 受講生情報を管理するリポジトリ
+   */
   @Autowired
-  public StudentService(StudentRepository repository) {
+  public StudentService(StudentRepository repository, StudentConverter converter) {
     this.repository = repository;
+    this.converter = converter;
   }
 
-  //生徒情報のリスト表示
-  public List<Student> searchStudentList(int minAge, int maxAge) {
-    List<Student> studentList = repository.searchStudent();
-    return studentList.stream()
-        .filter(student -> student.getAge() >= minAge && student.getAge() <= maxAge
-            && !student.isDeleted())
+  /**
+   * 受講生詳細情報一覧を全件検索。
+   *
+   * @return 受講生詳細情報一覧(全件)
+   */
+  public List<StudentDetail> searchStudentDetailList() {
+    //テーブルデータを各オブジェクトに格納
+    List<Student> students = repository.searchStudent();
+    List<Course> courses = repository.searchCourses();
+    List<StudentsCourses> studentsCourses = repository.searchStudentsCourses();
+    //削除フラグの立った生徒情報を省く
+    students = students.stream()
+        .filter(student -> !student.isDeleted())
         .collect(Collectors.toList());
+    //受講情報一覧とコース情報一覧のコンバート処理
+    List<CourseDetail> courseDetails = converter.courseDetails(studentsCourses, courses);
+    //受講生情報一覧と受講コース情報一覧をコンバート処理してリターン
+    return converter.studentDetails(students, courseDetails);
   }
 
-  //studentIdから生徒情報の表示
-  public Student searchStudent(String studentId) {
+  //todo:受講生詳細情報一覧をstudentIdを指定して検索するメソッドを作成する。
+
+  //todo:受講生詳細情報一覧をフィルタリング(削除済み・年齢・受講コース)して表示するメソッドを作成する。
+
+  /**
+   * 受講生IDが一致する受講生情報を検索する
+   *
+   * @param studentId 　受講生ID
+   * @return 受講生情報
+   */
+  public Student searchStudentById(String studentId) {
     List<Student> studentList = repository.searchStudent();
     return studentList.stream()
         .filter(student -> student.getStudentId().equals(studentId))
         .findFirst().orElseGet(Student::new);
   }
 
-  //studentIdから受講コース情報の表示
-  public List<StudentsCourses> studentsCourses(String studentId) {
-    List<StudentsCourses> studentsCoursesList = repository.searchStudentsCourses();
-    List<StudentsCourses> studentsCourses = new ArrayList<>();
-    for (StudentsCourses studentsCourse : studentsCoursesList) {
-      if (studentsCourse.getStudentId().equals(studentId)) {
-        studentsCourses.add(studentsCourse);
-      }
-    }
-    return studentsCourses;
-  }
-
-  //生徒コース情報のリスト表示
-  public List<StudentsCourses> searchStudentCourseList(String courseId) {
-    List<StudentsCourses> studentsCourseList = repository.searchStudentsCourses();
-    if (courseId.isEmpty()) {
-      return studentsCourseList;
-    } else {
-      return studentsCourseList.stream()
-          .filter(StudentsCourses -> StudentsCourses.getCourseId().equals(courseId))
-          .collect(Collectors.toList());
-    }
-  }
-
-  //コースの全件検索
+  /**
+   * コース情報一覧を全件検索
+   *
+   * @return コース情報一覧(全件)
+   */
   public List<Course> searchCourseList() {
     return repository.searchCourses();
   }
 
-  //生徒情報の新規追加
+  /**
+   * 新規受講生の受講生詳細情報を受け取り 受講生情報と受講情報を登録する
+   *
+   * @param studentDetail 受講生詳細情報
+   * @return　受講生詳細情報
+   */
   @Transactional
-  public void addStudent(StudentDetail studentDetail) {
-    //生徒情報と受講コースの両方で使用するもの
-    //生徒IDの決定
+  public StudentDetail addStudent(StudentDetail studentDetail) {
+    //受講生情報と受講情報の両方で使用するもの
+    //受講生IDの決定
     List<Student> studentList = repository.searchStudent();
     String studentId = Integer.toString(studentList.size() + 1);
 
-    //生徒情報追加に関する処理
+    //受講生情報追加に関する処理
     //引数のオブジェクトからデータをset
     Student student = studentDetail.getStudent();
-    //生徒IDのset
+    //受講生IDのset
     student.setStudentId(studentId);
     //論理削除フラグをset
     student.undelete();
     //studentsテーブルに追加
     repository.insertStudent(student);
 
-    //受講コースの追加に関する処理
+    //受講情報の追加に関する処理
     List<CourseDetail> courseDetails = studentDetail.getCourseDetail();
     //日付の取得
     LocalDate startDate = LocalDate.now();
@@ -98,7 +113,7 @@ public class StudentService {
     for (CourseDetail courseDetail : courseDetails) {
       //引数のオブジェクトからデータをset
       StudentsCourses studentsCourses = courseDetail.getStudentsCourses();
-      //生徒IDをset
+      //受講生IDをset
       studentsCourses.setStudentId(studentId);
       //開始日をset
       studentsCourses.setStartDate(Date.valueOf(startDate));
@@ -107,29 +122,39 @@ public class StudentService {
       //students_coursesテーブルに追加
       repository.insertStudentCourse(studentsCourses);
     }
+    return studentDetail;
   }
 
-  //生徒情報の変更
+  /**
+   * 受講生詳細情報を受け取り、受講生情報と受講情報の更新処理を行う。
+   *
+   * @param studentDetail 受講生詳細情報
+   */
   @Transactional
   public void updateStudent(StudentDetail studentDetail) {
-    //引数からを生徒情報をオブジェクトにセット
+    //引数から受講生情報をオブジェクトにセット
     Student student = studentDetail.getStudent();
-    //生徒情報の更新処理
+    //受講生情報の更新処理
     repository.updateStudent(student);
     //引数から受講コース情報をオブジェクトにセット
     List<CourseDetail> courseDetails = studentDetail.getCourseDetail();
-    //受講コース情報の更新処理
+    //受講コース情報を元に受講情報を更新する処理
     for (CourseDetail courseDetail : courseDetails) {
       StudentsCourses studentsCourses = courseDetail.getStudentsCourses();
       repository.updateStudentCourses(studentsCourses);
     }
   }
 
+  /**
+   * 受講生情報の論理削除を行う
+   *
+   * @param student 受講生情報
+   */
   @Transactional
   public void deleteStudent(Student student) {
     //削除フラグを立てる
     student.delete();
-    //生徒情報削除の処理
+    //受講生情報の削除処理
     repository.updateStudent(student);
   }
 }
