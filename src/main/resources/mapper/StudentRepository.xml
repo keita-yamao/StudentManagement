@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="raisetech.StudentManagement.repository.StudentRepository">
+
+  <!--受講生の全件検索-->
+  <select id="searchStudent" resultType="raisetech.StudentManagement.data.Student">
+    SELECT * FROM students
+  </select>
+
+  <!--コース情報の全件検索-->
+  <select id="searchCourses" resultType="raisetech.StudentManagement.data.Course">
+    SELECT * FROM courses
+  </select>
+
+  <!--受講コース情報の全件検索-->
+  <select id="searchStudentsCourses" resultType="raisetech.StudentManagement.data.StudentsCourses">
+    SELECT * FROM students_courses
+  </select>
+
+  <!--受講情報の追加-->
+  <insert id="insertStudent">
+    INSERT INTO students (student_id,name,furigana,nickname,email,address,age,gender,is_deleted)
+    VALUES
+    (#{studentId},#{name},#{furigana},#{nickname},#{email},#{address},#{age},#{gender},#{isDeleted})
+  </insert>
+
+  <!--受講情報の追加-->
+  <insert id="insertStudentCourse">
+    INSERT INTO students_courses (student_id,course_id,start_date,expected_completion_date)
+    VALUES (#{studentId},#{courseId},#{startDate},#{expectedCompletionDate})
+  </insert>
+
+  <!--受講生情報の更新-->
+  <update id="updateStudent">
+    UPDATE students SET
+    name=#{name},furigana=#{furigana},nickname=#{nickname},email=#{email},address=#{address},age=#{age},gender=#{gender},is_deleted
+    =#{isDeleted} WHERE student_id=#{studentId}
+  </update>
+
+  <!--受講情報の更新-->
+  <update id="updateStudentCourses">
+    UPDATE students_courses SET course_id=#{courseId} WHERE id=#{id}
+  </update>
+</mapper>

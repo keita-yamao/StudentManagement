@@ -1,10 +1,7 @@
 package raisetech.StudentManagement.repository;
 
 import java.util.List;
-import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
 import raisetech.StudentManagement.data.Course;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentsCourses;
@@ -20,7 +17,6 @@ public interface StudentRepository {
    *
    * @return 受講生一覧(全件)
    */
-  @Select("SELECT * FROM students")
   List<Student> searchStudent();
 
   /**
@@ -28,7 +24,6 @@ public interface StudentRepository {
    *
    * @return コース情報一覧(全件)
    */
-  @Select("SELECT * FROM courses")
   List<Course> searchCourses();
 
   /**
@@ -36,7 +31,6 @@ public interface StudentRepository {
    *
    * @return 受講コース情報一覧(全件)
    */
-  @Select("SELECT * FROM students_courses")
   List<StudentsCourses> searchStudentsCourses();
 
   /**
@@ -44,9 +38,6 @@ public interface StudentRepository {
    *
    * @param student 受講生情報
    */
-  @Insert(
-      "INSERT INTO students (student_id,name,furigana,nickname,email,address,age,gender,is_deleted) "
-          + "VALUES (#{studentId},#{name},#{furigana},#{nickname},#{email},#{address},#{age},#{gender},#{isDeleted})")
   void insertStudent(Student student);
 
   /**
@@ -54,9 +45,6 @@ public interface StudentRepository {
    *
    * @param studentsCourses 受講情報
    */
-  @Insert(
-      "INSERT INTO students_courses (student_id,course_id,start_date,expected_completion_date) "
-          + "VALUES (#{studentId},#{courseId},#{startDate},#{expectedCompletionDate})")
   void insertStudentCourse(StudentsCourses studentsCourses);
 
   /**
@@ -64,9 +52,6 @@ public interface StudentRepository {
    *
    * @param student 受講生情報
    */
-  @Update(
-      "UPDATE students SET name=#{name},furigana=#{furigana},nickname=#{nickname},email=#{email}"
-          + ",address=#{address},age=#{age},gender=#{gender},is_deleted =#{isDeleted} WHERE student_id=#{studentId}")
   void updateStudent(Student student);
 
   /**
@@ -74,7 +59,6 @@ public interface StudentRepository {
    *
    * @param studentsCourses 受講情報
    */
-  @Update("UPDATE students_courses SET course_id=#{courseId} WHERE id=#{id}")
   void updateStudentCourses(StudentsCourses studentsCourses);
 
 }

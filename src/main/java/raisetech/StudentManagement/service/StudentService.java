@@ -85,7 +85,7 @@ public class StudentService {
    * 新規受講生の受講生詳細情報を受け取り 受講生情報と受講情報を登録する
    *
    * @param studentDetail 受講生詳細情報
-   * @return　受講生詳細情報
+   * @return 受講生詳細情報
    */
   @Transactional
   public StudentDetail addStudent(StudentDetail studentDetail) {
