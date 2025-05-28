@@ -49,6 +49,25 @@ public class StudentConverter {
   }
 
   /**
+   * 単一の受講生に紐づく受講生コース情報のマッピング 受講生コース情報は受講生に対して複数存在するのでループ処理で受講生情報を作成する
+   *
+   * @param student       受講生情報
+   * @param courseDetails 受講コース情報リスト
+   * @return 受講生詳細情報
+   */
+  public StudentDetail studentDetail(Student student, List<CourseDetail> courseDetails) {
+    //受講生コース情報一覧オブジェクト作成
+    List<CourseDetail> courseDetailList = courseDetails.stream().filter(
+            //受講生IDをもとに受講生情報と受講生コース情報を突合処理
+            courseDetail -> student.getStudentId()
+                .equals(courseDetail.getStudentsCourses().getStudentId()))
+        .collect(Collectors.toList());
+    //受講生情報＋受講コース情報を持つreturn用オブジェクト作成
+    StudentDetail studentDetail = new StudentDetail(student, courseDetailList);
+    return studentDetail;
+  }
+
+  /**
    * 受講情報に紐づくコース情報のマッピング 受講情報はコース情報に対して複数存在するのでループ処理で受講生コース情報を作成する。
    *
    * @param studentsCourses 受講情報一覧

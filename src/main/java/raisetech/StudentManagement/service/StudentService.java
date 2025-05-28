@@ -55,9 +55,43 @@ public class StudentService {
     return converter.studentDetails(students, courseDetails);
   }
 
-  //todo:受講生詳細情報一覧をstudentIdを指定して検索するメソッドを作成する。
+  /**
+   * 受講生詳細情報を受講生IDで検索
+   *
+   * @param studentId 受講生ID
+   * @return 受講生詳細情報(1件)
+   */
+  public StudentDetail searchStudentDetailById(String studentId) {
+    //テーブルデータを各オブジェクトに格納
+    Student student = repository.searchStudentById(studentId);
+    List<Course> courses = repository.searchCourses();
+    List<StudentsCourses> studentsCourses = repository.searchStudentsCourses();
+    //受講情報一覧とコース情報一覧のコンバート処理
+    List<CourseDetail> courseDetails = converter.courseDetails(studentsCourses, courses);
+    //受講生情報一覧と受講コース情報一覧をコンバート処理してリターン
+    return converter.studentDetail(student, courseDetails);
+  }
 
-  //todo:受講生詳細情報一覧をフィルタリング(削除済み・年齢・受講コース)して表示するメソッドを作成する。
+  /**
+   * 受講生詳細情報一覧をフィルタリング(削除済み・年齢・受講コース)して表示する
+   *
+   * @param minAge    検索年齢の最小値
+   * @param maxAge    検索年齢の最大値
+   * @param isDeleted 論理削除の真偽値
+   * @param courseId  コースID
+   * @return 受講生詳細情報一覧(条件に一致するもの)
+   */
+  public List<StudentDetail> searchFilterStudentDetailList(Integer minAge, Integer maxAge,
+      Boolean isDeleted, String courseId) {
+    //テーブルデータを各オブジェクトに格納
+    List<Student> students = repository.searchFilterStudent(minAge, maxAge, isDeleted);
+    List<Course> courses = repository.searchCourses();
+    List<StudentsCourses> studentsCourses = repository.searchFilterStudentsCourses(courseId);
+    //受講情報一覧とコース情報一覧のコンバート処理
+    List<CourseDetail> courseDetails = converter.courseDetails(studentsCourses, courses);
+    //受講生情報一覧と受講コース情報一覧をコンバート処理してリターン
+    return converter.studentDetails(students, courseDetails);
+  }
 
   /**
    * 受講生IDが一致する受講生情報を検索する
