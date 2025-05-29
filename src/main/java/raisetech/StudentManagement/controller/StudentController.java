@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import raisetech.StudentManagement.controller.converter.StudentConverter;
 import raisetech.StudentManagement.controller.dto.ResponseDeleteStudent;
 import raisetech.StudentManagement.controller.dto.ResponseRegisterStudent;
 import raisetech.StudentManagement.controller.dto.ResponseUpdateStudent;
@@ -25,18 +24,15 @@ import raisetech.StudentManagement.service.StudentService;
 public class StudentController {
 
   private final StudentService service;
-  private final StudentConverter converter;
 
   /**
    * コンストラクタ
    *
-   * @param service   　受講生サービス
-   * @param converter 　受講生コンバーター
+   * @param service 　受講生サービス
    */
   @Autowired
-  private StudentController(StudentService service, StudentConverter converter) {
+  private StudentController(StudentService service) {
     this.service = service;
-    this.converter = converter;
   }
 
   /**
