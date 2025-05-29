@@ -4,8 +4,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import raisetech.StudentManagement.controller.converter.StudentConverter;
 import raisetech.StudentManagement.controller.dto.ResponseDeleteStudent;
@@ -47,9 +49,34 @@ public class StudentController {
     return service.searchStudentDetailList();
   }
 
-  //todo:受講生詳細情報一覧をstudentIdを指定して検索するメソッドを作成する。
+  /**
+   * 単一の受講生詳細情報の検索
+   *
+   * @param studentId 受講生ID
+   * @return 受講生詳細情報(1件)
+   */
+  @GetMapping("/students/{studentId}")
+  public StudentDetail getStudentDetailById(@PathVariable String studentId) {
+    return service.searchStudentDetailById(studentId);
+  }
 
-  //todo:受講生詳細情報一覧をフィルタリング(削除済み・年齢・受講コース)して表示するメソッドを作成する。
+  /**
+   * 受講生詳細情報の絞り込み検索
+   *
+   * @param minAge    検索年齢の最小値
+   * @param maxAge    検索年齢の最大値
+   * @param isDeleted 論理削除の真偽値
+   * @param courseId  コースID
+   * @return 受講生詳細情報一覧(条件に一致するもの)
+   */
+  @GetMapping("/students")
+  public List<StudentDetail> getFilteredStudentDetailList(
+      @RequestParam(required = false) Integer minAge,
+      @RequestParam(required = false) Integer maxAge,
+      @RequestParam(required = false) Boolean isDeleted,
+      @RequestParam(required = false) String courseId) {
+    return service.searchFilterStudentDetailList(minAge, maxAge, isDeleted, courseId);
+  }
 
   /**
    * コース一覧の全件検索

@@ -19,6 +19,26 @@ public interface StudentRepository {
    */
   List<Student> searchStudent();
 
+  //todo:削除フラグのある受講生を入力された場合の例外処理の作成
+
+  /**
+   * 受講生をstudent_idで検索(論理削除済みを除く)
+   *
+   * @param studentId 受講生ID
+   * @return 受講生情報(1件)
+   */
+  Student searchStudentById(String studentId);
+
+  /**
+   * 受講生を年齢・論理削除の真偽値で絞り込み検索
+   *
+   * @param minAge    最少年齢
+   * @param maxAge    最大年齢
+   * @param isDeleted 論理削除の真偽値
+   * @return 受講生情報一覧(条件に一致するもの)
+   */
+  List<Student> searchFilterStudent(Integer minAge, Integer maxAge, Boolean isDeleted);
+
   /**
    * コース情報の全件検索
    *
@@ -32,6 +52,14 @@ public interface StudentRepository {
    * @return 受講コース情報一覧(全件)
    */
   List<StudentsCourses> searchStudentsCourses();
+
+  /**
+   * 受講コース情報をコースIDで絞り込み検索
+   *
+   * @param courseId コースID
+   * @return 受講コース情報
+   */
+  List<StudentsCourses> searchFilterStudentsCourses(String courseId);
 
   /**
    * 受講生情報の追加

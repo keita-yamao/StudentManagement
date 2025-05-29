@@ -8,6 +8,28 @@
     SELECT * FROM students
   </select>
 
+  <!--受講生をstudent_idで検索-->
+  <select id="searchStudentById" resultType="raisetech.StudentManagement.data.Student">
+    SELECT * FROM students WHERE Student_id=#{studentId} AND is_deleted = FALSE
+  </select>
+
+  <!--受講生の絞り込み検索-->
+  <select id="searchFilterStudent" resultType="raisetech.StudentManagement.data.Student">
+    SELECT * FROM students WHERE 1=1
+    <if test="isDeleted == true">
+      AND is_deleted = true
+    </if>
+    <if test="isDeleted == false">
+      AND is_deleted = false
+    </if>
+    <if test="minAge != null">
+      AND age &gt;= #{minAge}
+    </if>
+    <if test="maxAge != null">
+      AND age &lt;= #{maxAge}
+    </if>
+  </select>
+
   <!--コース情報の全件検索-->
   <select id="searchCourses" resultType="raisetech.StudentManagement.data.Course">
     SELECT * FROM courses
@@ -16,6 +38,15 @@
   <!--受講コース情報の全件検索-->
   <select id="searchStudentsCourses" resultType="raisetech.StudentManagement.data.StudentsCourses">
     SELECT * FROM students_courses
+  </select>
+
+  <!--受講コース情報の絞り込み検索-->
+  <select id="searchFilterStudentsCourses"
+    resultType="raisetech.StudentManagement.data.StudentsCourses">
+    SELECT * FROM students_courses WHERE 1=1
+    <if test="courseId != null">
+      AND course_id = #{courseId}
+    </if>
   </select>
 
   <!--受講情報の追加-->
