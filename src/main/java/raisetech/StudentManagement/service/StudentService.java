@@ -50,9 +50,9 @@ public class StudentService {
         .filter(student -> !student.isDeleted())
         .collect(Collectors.toList());
     //受講情報一覧とコース情報一覧のコンバート処理
-    List<CourseDetail> courseDetails = converter.courseDetails(studentsCourses, courses);
+    List<CourseDetail> courseDetails = converter.createCourseDetails(studentsCourses, courses);
     //受講生情報一覧と受講コース情報一覧をコンバート処理してリターン
-    return converter.studentDetails(students, courseDetails);
+    return converter.createStudentDetails(students, courseDetails);
   }
 
   /**
@@ -67,9 +67,9 @@ public class StudentService {
     List<Course> courses = repository.searchCourses();
     List<StudentsCourses> studentsCourses = repository.searchStudentsCourses();
     //受講情報一覧とコース情報一覧のコンバート処理
-    List<CourseDetail> courseDetails = converter.courseDetails(studentsCourses, courses);
+    List<CourseDetail> courseDetails = converter.createCourseDetails(studentsCourses, courses);
     //受講生情報一覧と受講コース情報一覧をコンバート処理してリターン
-    return converter.studentDetail(student, courseDetails);
+    return converter.createStudentDetail(student, courseDetails);
   }
 
   /**
@@ -88,9 +88,9 @@ public class StudentService {
     List<Course> courses = repository.searchCourses();
     List<StudentsCourses> studentsCourses = repository.searchFilterStudentsCourses(courseId);
     //受講情報一覧とコース情報一覧のコンバート処理
-    List<CourseDetail> courseDetails = converter.courseDetails(studentsCourses, courses);
+    List<CourseDetail> courseDetails = converter.createCourseDetails(studentsCourses, courses);
     //受講生情報一覧と受講コース情報一覧をコンバート処理してリターン
-    return converter.studentDetails(students, courseDetails);
+    return converter.createStudentDetails(students, courseDetails);
   }
 
   /**

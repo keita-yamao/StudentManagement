@@ -55,7 +55,7 @@ public class StudentController {
    * @param studentId 受講生ID
    * @return 受講生詳細情報(1件)
    */
-  @GetMapping("/student/{studentId}")
+  @GetMapping("/students/{studentId}")
   public StudentDetail getStudentDetailById(@PathVariable String studentId) {
     return service.searchStudentDetailById(studentId);
   }
@@ -69,7 +69,7 @@ public class StudentController {
    * @param courseId  コースID
    * @return 受講生詳細情報一覧(条件に一致するもの)
    */
-  @GetMapping("/filteredStudentList")
+  @GetMapping("/students")
   public List<StudentDetail> getFilteredStudentDetailList(
       @RequestParam(required = false) Integer minAge,
       @RequestParam(required = false) Integer maxAge,

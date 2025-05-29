@@ -24,7 +24,7 @@ public class StudentConverter {
    * @param courseDetails 受講コース情報リスト
    * @return 受講生詳細情報一覧
    */
-  public List<StudentDetail> studentDetails(List<Student> students,
+  public List<StudentDetail> createStudentDetails(List<Student> students,
       List<CourseDetail> courseDetails) {
     //受講生情報＋受講コース情報を持つreturn用リストオブジェクト作成
     List<StudentDetail> studentDetails = new ArrayList<>();
@@ -55,7 +55,7 @@ public class StudentConverter {
    * @param courseDetails 受講コース情報リスト
    * @return 受講生詳細情報
    */
-  public StudentDetail studentDetail(Student student, List<CourseDetail> courseDetails) {
+  public StudentDetail createStudentDetail(Student student, List<CourseDetail> courseDetails) {
     //受講生コース情報一覧オブジェクト作成
     List<CourseDetail> courseDetailList = courseDetails.stream().filter(
             //受講生IDをもとに受講生情報と受講生コース情報を突合処理
@@ -74,7 +74,7 @@ public class StudentConverter {
    * @param courses         コース情報一覧
    * @return 受講生コース情報一覧
    */
-  public List<CourseDetail> courseDetails(List<StudentsCourses> studentsCourses,
+  public List<CourseDetail> createCourseDetails(List<StudentsCourses> studentsCourses,
       List<Course> courses) {
     //受講コース情報一覧の作成
     List<CourseDetail> courseDetails = new ArrayList<>();
