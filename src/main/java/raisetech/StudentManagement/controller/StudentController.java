@@ -1,15 +1,20 @@
 package raisetech.StudentManagement.controller;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import raisetech.StudentManagement.controller.converter.StudentConverter;
 import raisetech.StudentManagement.controller.dto.ResponseDeleteStudent;
 import raisetech.StudentManagement.controller.dto.ResponseRegisterStudent;
 import raisetech.StudentManagement.controller.dto.ResponseUpdateStudent;
@@ -21,22 +26,20 @@ import raisetech.StudentManagement.service.StudentService;
 /**
  * 受講生の検索や登録、更新などを行うREST APIとして受け付けるコントローラークラス
  */
+@Validated
 @RestController
 public class StudentController {
 
   private final StudentService service;
-  private final StudentConverter converter;
 
   /**
    * コンストラクタ
    *
-   * @param service   　受講生サービス
-   * @param converter 　受講生コンバーター
+   * @param service 　受講生サービス
    */
   @Autowired
-  private StudentController(StudentService service, StudentConverter converter) {
+  public StudentController(StudentService service) {
     this.service = service;
-    this.converter = converter;
   }
 
   /**
@@ -56,7 +59,8 @@ public class StudentController {
    * @return 受講生詳細情報(1件)
    */
   @GetMapping("/students/{studentId}")
-  public StudentDetail getStudentDetailById(@PathVariable String studentId) {
+  public StudentDetail getStudentDetailById(
+      @PathVariable @Size(min = 1, max = 10, message = "入力できる値は10文字までです") @Pattern(regexp = "^(?!.*[ \u0020\u3000]).*$", message = "半角スペースと全角スペースは使用できません") String studentId) {
     return service.searchStudentDetailById(studentId);
   }
 
@@ -71,10 +75,10 @@ public class StudentController {
    */
   @GetMapping("/students")
   public List<StudentDetail> getFilteredStudentDetailList(
-      @RequestParam(required = false) Integer minAge,
-      @RequestParam(required = false) Integer maxAge,
+      @RequestParam(required = false) @Min(value = 0, message = "年齢の最小値は0です") Integer minAge,
+      @RequestParam(required = false) @Max(value = 120, message = "年齢の最大値は120です") Integer maxAge,
       @RequestParam(required = false) Boolean isDeleted,
-      @RequestParam(required = false) String courseId) {
+      @RequestParam(required = false) @Size(min = 5, max = 5, message = "コースIDは5文字で入力してください") String courseId) {
     return service.searchFilterStudentDetailList(minAge, maxAge, isDeleted, courseId);
   }
 
@@ -96,7 +100,7 @@ public class StudentController {
    */
   @PostMapping("/registerStudent")
   public ResponseEntity<ResponseRegisterStudent> registerStudent(
-      @RequestBody StudentDetail studentDetail) {
+      @RequestBody @Valid StudentDetail studentDetail) {
     //登録処理
     service.addStudent(studentDetail);
     //DTOオブジェクトに登録処理情報を格納
@@ -112,7 +116,7 @@ public class StudentController {
    */
   @PostMapping("/updateStudent")
   public ResponseEntity<ResponseUpdateStudent> updateStudent(
-      @RequestBody StudentDetail studentDetail) {
+      @RequestBody @Valid StudentDetail studentDetail) {
     //更新処理
     service.updateStudent(studentDetail);
     //DTOオブジェクトに更新処理情報を格納
@@ -127,7 +131,8 @@ public class StudentController {
    * @return 削除処理が完了した受講生情報と削除メッセージのDTOを返す
    */
   @PostMapping("/deleteStudent")
-  public ResponseEntity<ResponseDeleteStudent> deleteStudent(@RequestBody String studentId) {
+  public ResponseEntity<ResponseDeleteStudent> deleteStudent(
+      @RequestBody @Size(min = 1, max = 10, message = "入力できる受講生IDは10文字までです") @Pattern(regexp = "^(?!.*[ \u0020\u3000]).*$", message = "半角スペースと全角スペースは使用できません") String studentId) {
     //studentIdから登録データをオブジェクトに格納
     Student student = service.searchStudentById(studentId);
     //削除処理

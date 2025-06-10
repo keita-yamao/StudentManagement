@@ -31,7 +31,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     // Apache Commons Lang(便利機能・ユーティリティ)
     implementation 'org.apache.commons:commons-lang3:3.14.0'
-
+    //validation
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
     //Lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
