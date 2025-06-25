@@ -21,6 +21,7 @@ import raisetech.StudentManagement.controller.dto.ResponseUpdateStudent;
 import raisetech.StudentManagement.data.Course;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.domein.StudentDetail;
+import raisetech.StudentManagement.exception.TestException;
 import raisetech.StudentManagement.service.StudentService;
 
 /**
@@ -140,5 +141,10 @@ public class StudentController {
     //DTOオブジェクトに削除処理情報を格納
     ResponseDeleteStudent responseDeleteStudent = new ResponseDeleteStudent(student);
     return ResponseEntity.ok(responseDeleteStudent);
+  }
+
+  @GetMapping("/throwException")
+  public Student throwException() throws TestException {
+    throw new TestException("例外処理テスト");
   }
 }
