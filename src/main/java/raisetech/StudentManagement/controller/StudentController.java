@@ -1,5 +1,6 @@
 package raisetech.StudentManagement.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -48,6 +49,7 @@ public class StudentController {
    *
    * @return 受講生詳細情報一覧(全件)
    */
+  @Operation(summary = "受講生詳細情報の一覧検索", description = "受講生詳細情報を一覧を検索します")
   @GetMapping("/studentList")
   public List<StudentDetail> getStudentDetailList() {
     return service.searchStudentDetailList();
@@ -59,6 +61,7 @@ public class StudentController {
    * @param studentId 受講生ID
    * @return 受講生詳細情報(1件)
    */
+  @Operation(summary = "受講生詳細情報の単一検索", description = "受講生詳細情報を受講生IDを1件指定して検索します")
   @GetMapping("/students/{studentId}")
   public StudentDetail getStudentDetailById(
       @PathVariable @Size(min = 1, max = 10, message = "入力できる値は10文字までです") @Pattern(regexp = "^(?!.*[ \u0020\u3000]).*$", message = "半角スペースと全角スペースは使用できません") String studentId) {
@@ -74,6 +77,7 @@ public class StudentController {
    * @param courseId  コースID
    * @return 受講生詳細情報一覧(条件に一致するもの)
    */
+  @Operation(summary = "受講生詳細情報の絞り込み検索", description = "受講生詳細情報を年齢・削除済み・コースIDを指定して検索します。")
   @GetMapping("/students")
   public List<StudentDetail> getFilteredStudentDetailList(
       @RequestParam(required = false) @Min(value = 0, message = "年齢の最小値は0です") Integer minAge,
@@ -88,6 +92,7 @@ public class StudentController {
    *
    * @return コース一覧(全件)
    */
+  @Operation(summary = "コース一覧検索", description = "コース情報を一覧検索します。")
   @GetMapping("/courseList")
   public List<Course> getCourseList() {
     return service.searchCourseList();
@@ -99,6 +104,7 @@ public class StudentController {
    * @param studentDetail 登録する受講生詳細情報の入ったオブジェクト
    * @return 登録された受講生情報の入ったオブジェクトを返す
    */
+  @Operation(summary = "受講生詳細情報の登録", description = "受講生詳細情報の登録処理を行います。")
   @PostMapping("/registerStudent")
   public ResponseEntity<ResponseRegisterStudent> registerStudent(
       @RequestBody @Valid StudentDetail studentDetail) {
@@ -115,6 +121,7 @@ public class StudentController {
    * @param studentDetail 更新する受講生情報の入ったオブジェクト
    * @return 更新処理が完了したメッセージの文字列
    */
+  @Operation(summary = "新規登録", description = "受講生の新規登録処理を行います。")
   @PostMapping("/updateStudent")
   public ResponseEntity<ResponseUpdateStudent> updateStudent(
       @RequestBody @Valid StudentDetail studentDetail) {
@@ -131,6 +138,7 @@ public class StudentController {
    * @param studentId 受講生ID
    * @return 削除処理が完了した受講生情報と削除メッセージのDTOを返す
    */
+  @Operation(summary = "受講生の削除", description = "受講生IDを指定して受講生情報の論理削除処理を行います。")
   @PostMapping("/deleteStudent")
   public ResponseEntity<ResponseDeleteStudent> deleteStudent(
       @RequestBody @Size(min = 1, max = 10, message = "入力できる受講生IDは10文字までです") @Pattern(regexp = "^(?!.*[ \u0020\u3000]).*$", message = "半角スペースと全角スペースは使用できません") String studentId) {
@@ -143,6 +151,12 @@ public class StudentController {
     return ResponseEntity.ok(responseDeleteStudent);
   }
 
+  /**
+   * 例外処理テスト用
+   *
+   * @return
+   * @throws TestException
+   */
   @GetMapping("/throwException")
   public Student throwException() throws TestException {
     throw new TestException("例外処理テスト");
