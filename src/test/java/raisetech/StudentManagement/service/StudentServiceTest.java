@@ -6,6 +6,9 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import factory.TestDataFactory;
 import java.util.ArrayList;
@@ -16,7 +19,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import raisetech.StudentManagement.controller.converter.StudentConverter;
 import raisetech.StudentManagement.data.Course;
@@ -56,19 +58,19 @@ class StudentServiceTest {
     List<StudentsCourses> studentsCourses = new ArrayList<>();
 
     //リポジトリのスタブ化
-    Mockito.when(repository.searchStudent()).thenReturn(students);
-    Mockito.when(repository.searchCourses()).thenReturn(courses);
-    Mockito.when(repository.searchStudentsCourses()).thenReturn(studentsCourses);
+    when(repository.searchStudent()).thenReturn(students);
+    when(repository.searchCourses()).thenReturn(courses);
+    when(repository.searchStudentsCourses()).thenReturn(studentsCourses);
 
     //実行
     sut.searchStudentDetailList();
 
     //検証
-    Mockito.verify(repository, Mockito.times(1)).searchStudent();
-    Mockito.verify(repository, Mockito.times(1)).searchCourses();
-    Mockito.verify(repository, Mockito.times(1)).searchStudentsCourses();
-    Mockito.verify(converter, Mockito.times(1)).createCourseDetails(studentsCourses, courses);
-    Mockito.verify(converter, Mockito.times(1)).createStudentDetails(students, courseDetails);
+    verify(repository, times(1)).searchStudent();
+    verify(repository, times(1)).searchCourses();
+    verify(repository, times(1)).searchStudentsCourses();
+    verify(converter, times(1)).createCourseDetails(studentsCourses, courses);
+    verify(converter, times(1)).createStudentDetails(students, courseDetails);
 
   }
 
@@ -85,11 +87,11 @@ class StudentServiceTest {
     List<StudentsCourses> studentsCourses = new ArrayList<>();
     List<CourseDetail> courseDetails = new ArrayList<>();
     List<StudentDetail> studentDetails = new ArrayList<>();
-    Mockito.when(repository.searchStudent()).thenReturn(students);
-    Mockito.when(repository.searchCourses()).thenReturn(courses);
-    Mockito.when(repository.searchStudentsCourses()).thenReturn(studentsCourses);
-    Mockito.when(converter.createCourseDetails(studentsCourses, courses)).thenReturn(courseDetails);
-    Mockito.when(converter.createStudentDetails(studentsCaptor.capture(), eq(courseDetails)))
+    when(repository.searchStudent()).thenReturn(students);
+    when(repository.searchCourses()).thenReturn(courses);
+    when(repository.searchStudentsCourses()).thenReturn(studentsCourses);
+    when(converter.createCourseDetails(studentsCourses, courses)).thenReturn(courseDetails);
+    when(converter.createStudentDetails(studentsCaptor.capture(), eq(courseDetails)))
         .thenReturn(studentDetails);
 
     //実行
@@ -113,19 +115,19 @@ class StudentServiceTest {
     List<CourseDetail> courseDetails = new ArrayList<>();
 
     //リポジトリのスタブ化
-    Mockito.when(repository.searchStudentById(anyString())).thenReturn(student);
-    Mockito.when(repository.searchCourses()).thenReturn(courses);
-    Mockito.when(repository.searchStudentsCourses()).thenReturn(studentsCourses);
+    when(repository.searchStudentById(anyString())).thenReturn(student);
+    when(repository.searchCourses()).thenReturn(courses);
+    when(repository.searchStudentsCourses()).thenReturn(studentsCourses);
 
     //実行
     sut.searchStudentDetailById(anyString());
 
     //検証
-    Mockito.verify(repository, Mockito.times(1)).searchStudentById(anyString());
-    Mockito.verify(repository, Mockito.times(1)).searchCourses();
-    Mockito.verify(repository, Mockito.times(1)).searchStudentsCourses();
-    Mockito.verify(converter, Mockito.times(1)).createCourseDetails(studentsCourses, courses);
-    Mockito.verify(converter, Mockito.times(1)).createStudentDetail(student, courseDetails);
+    verify(repository, times(1)).searchStudentById(anyString());
+    verify(repository, times(1)).searchCourses();
+    verify(repository, times(1)).searchStudentsCourses();
+    verify(converter, times(1)).createCourseDetails(studentsCourses, courses);
+    verify(converter, times(1)).createStudentDetail(student, courseDetails);
 
   }
 
@@ -142,21 +144,21 @@ class StudentServiceTest {
     List<CourseDetail> courseDetails = new ArrayList<>();
 
     //リポジトリのスタブ化
-    Mockito.when(repository.searchFilterStudent(anyInt(), anyInt(), anyBoolean()))
+    when(repository.searchFilterStudent(anyInt(), anyInt(), anyBoolean()))
         .thenReturn(students);
-    Mockito.when(repository.searchCourses()).thenReturn(courses);
-    Mockito.when(repository.searchFilterStudentsCourses(anyString())).thenReturn(studentsCourses);
+    when(repository.searchCourses()).thenReturn(courses);
+    when(repository.searchFilterStudentsCourses(anyString())).thenReturn(studentsCourses);
 
     //実行
     sut.searchFilterStudentDetailList(0, 30, false, "00001");
 
     //検証
-    Mockito.verify(repository, Mockito.times(1))
+    verify(repository, times(1))
         .searchFilterStudent(anyInt(), anyInt(), anyBoolean());
-    Mockito.verify(repository, Mockito.times(1)).searchCourses();
-    Mockito.verify(repository, Mockito.times(1)).searchFilterStudentsCourses(anyString());
-    Mockito.verify(converter, Mockito.times(1)).createCourseDetails(studentsCourses, courses);
-    Mockito.verify(converter, Mockito.times(1)).createStudentDetails(students, courseDetails);
+    verify(repository, times(1)).searchCourses();
+    verify(repository, times(1)).searchFilterStudentsCourses(anyString());
+    verify(converter, times(1)).createCourseDetails(studentsCourses, courses);
+    verify(converter, times(1)).createStudentDetails(students, courseDetails);
 
   }
 
@@ -171,13 +173,13 @@ class StudentServiceTest {
     List<Student> studentList = new ArrayList<>();
 
     //リポジトリのスタブ化
-    Mockito.when(repository.searchStudent()).thenReturn(studentList);
+    when(repository.searchStudent()).thenReturn(studentList);
 
     //実行
     sut.searchStudentById("1");
 
     //検証
-    Mockito.verify(repository, Mockito.times(1)).searchStudent();
+    verify(repository, times(1)).searchStudent();
 
   }
 
@@ -187,7 +189,7 @@ class StudentServiceTest {
     List<Student> students = TestDataFactory.createSampleStudents();
 
     //リポジトリのスタブ化
-    Mockito.when(repository.searchStudent()).thenReturn(students);
+    when(repository.searchStudent()).thenReturn(students);
 
     //実行
     Student actual = sut.searchStudentById("1");
@@ -206,7 +208,7 @@ class StudentServiceTest {
     sut.searchCourseList();
 
     //検証
-    Mockito.verify(repository, Mockito.times(1)).searchCourses();
+    verify(repository, times(1)).searchCourses();
   }
 
   /*
@@ -223,15 +225,15 @@ class StudentServiceTest {
     StudentDetail studentDetail = TestDataFactory.createSampleNewStudentDetail();
 
     //リポジトリのスタブ化
-    Mockito.when(repository.searchStudent()).thenReturn(studentList);
+    when(repository.searchStudent()).thenReturn(studentList);
 
     //実行
     sut.addStudent(studentDetail);
 
     //検証
-    Mockito.verify(repository, Mockito.times(1)).searchStudent();
-    Mockito.verify(repository, Mockito.times(1)).insertStudent(any(Student.class));
-    Mockito.verify(repository, Mockito.times(1)).insertStudentCourse(any(StudentsCourses.class));
+    verify(repository, times(1)).searchStudent();
+    verify(repository, times(1)).insertStudent(any(Student.class));
+    verify(repository, times(1)).insertStudentCourse(any(StudentsCourses.class));
 
   }
 
@@ -248,14 +250,14 @@ class StudentServiceTest {
         StudentsCourses.class);
 
     //リポジトリのスタブ化
-    Mockito.when(repository.searchStudent()).thenReturn(studentList);
+    when(repository.searchStudent()).thenReturn(studentList);
 
     //実行
     sut.addStudent(studentDetail);
 
     //検証
-    Mockito.verify(repository).insertStudent(studentsCaptor.capture());
-    Mockito.verify(repository)
+    verify(repository).insertStudent(studentsCaptor.capture());
+    verify(repository)
         .insertStudentCourse(studentCoursesCaptor.capture());
     assertEquals("4", studentsCaptor.getValue().getStudentId());
     assertEquals(false, studentsCaptor.getValue().isDeleted());
@@ -277,8 +279,8 @@ class StudentServiceTest {
     sut.updateStudent(studentDetail);
 
     //検証
-    Mockito.verify(repository, Mockito.times(1)).updateStudent(any(Student.class));
-    Mockito.verify(repository, Mockito.times(1)).updateStudentCourses(any(StudentsCourses.class));
+    verify(repository, times(1)).updateStudent(any(Student.class));
+    verify(repository, times(1)).updateStudentCourses(any(StudentsCourses.class));
   }
 
   @Test
@@ -295,7 +297,7 @@ class StudentServiceTest {
     sut.updateStudent(studentDetail);
 
     //検証
-    Mockito.verify(repository).updateStudent(studentCaptor.capture());
+    verify(repository).updateStudent(studentCaptor.capture());
     assertEquals("1", studentCaptor.getValue().getStudentId());
     assertEquals("山本太郎", studentCaptor.getValue().getName());
     assertEquals("ヤマモトタロウ", studentCaptor.getValue().getFurigana());
@@ -306,7 +308,7 @@ class StudentServiceTest {
     assertEquals("男性", studentCaptor.getValue().getGender());
     assertEquals(false, studentCaptor.getValue().isDeleted());
 
-    Mockito.verify(repository).updateStudentCourses(studentsCoursesCaptor.capture());
+    verify(repository).updateStudentCourses(studentsCoursesCaptor.capture());
     assertEquals(1, studentsCoursesCaptor.getValue().getId());
     assertEquals("1", studentsCoursesCaptor.getValue().getStudentId());
     assertEquals("00001", studentsCoursesCaptor.getValue().getCourseId());
@@ -327,7 +329,7 @@ class StudentServiceTest {
     sut.deleteStudent(student);
 
     //検証
-    Mockito.verify(repository, Mockito.times(1)).updateStudent(student);
+    verify(repository, times(1)).updateStudent(student);
 
   }
 
@@ -344,7 +346,7 @@ class StudentServiceTest {
     sut.deleteStudent(student);
 
     //検証
-    Mockito.verify(repository).updateStudent(studentCaptor.capture());
+    verify(repository).updateStudent(studentCaptor.capture());
     assertEquals(true, studentCaptor.getValue().isDeleted());
   }
 }
