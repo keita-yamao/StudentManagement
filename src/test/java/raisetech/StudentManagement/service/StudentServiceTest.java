@@ -273,7 +273,7 @@ class StudentServiceTest {
   @Test
   void 受講生詳細情報の更新_リポジトリが想定回数行われているか() {
     //テストデータのセット
-    StudentDetail studentDetail = TestDataFactory.ccreateSampleStudentDetail();
+    StudentDetail studentDetail = TestDataFactory.createSampleStudentDetail();
 
     //実行
     sut.updateStudent(studentDetail);
@@ -286,7 +286,7 @@ class StudentServiceTest {
   @Test
   void 受講生詳細情報の更新_リポジトリのメソッド引数の値が想定通りか() {
     //テストデータのセット
-    StudentDetail studentDetail = TestDataFactory.ccreateSampleStudentDetail();
+    StudentDetail studentDetail = TestDataFactory.createSampleStudentDetail();
 
     //引数検証のためのキャプチャーオブジェクトの作成
     ArgumentCaptor<Student> studentCaptor = ArgumentCaptor.forClass(Student.class);
