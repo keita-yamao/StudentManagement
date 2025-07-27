@@ -11,8 +11,8 @@ import raisetech.StudentManagement.domein.StudentDetail;
 
 public class TestDataFactory {
 
-  //受講生詳細情報
-  public static StudentDetail ccreateSampleStudentDetail() {
+  //単一受講生詳細情報
+  public static StudentDetail createSampleStudentDetail() {
     //受講生情報
     Student student = new Student();
     student.setStudentId("1");
@@ -49,6 +49,79 @@ public class TestDataFactory {
     studentDetail.setCourseDetail(courseDetails);
 
     return studentDetail;
+  }
+
+  //受講生詳細情報一覧
+  public static List<StudentDetail> createSampleStudentDetails() {
+    //受講生情報
+    Student student1 = new Student();
+    student1.setStudentId("1");
+    student1.setName("山本太郎");
+    student1.setFurigana("ヤマモトタロウ");
+    student1.setNickname("タロ");
+    student1.setEmail("taro@exampl.com");
+    student1.setAddress("東京");
+    student1.setAge(25);
+    student1.setGender("男性");
+    student1.undelete();//削除フラグfalse
+
+    //受講生2
+    Student student2 = new Student();
+    student2.setStudentId("2");
+    student2.setName("鈴木一郎");
+    student2.setFurigana("スズキイチロウ");
+    student2.setNickname("イチ");
+    student2.setEmail("ichiro@exampl.com");
+    student2.setAddress("大阪");
+    student2.setAge(30);
+    student2.setGender("男性");
+    student2.undelete();//削除フラグfalse
+
+    //コース情報
+    Course course = new Course();
+    course.setCourseId("00001");
+    course.setCourse("Javaコース");
+
+    //受講情報1
+    StudentsCourses studentsCourses1 = new StudentsCourses();
+    studentsCourses1.setId(1);
+    studentsCourses1.setStudentId("1");
+    studentsCourses1.setCourseId("00001");
+    studentsCourses1.setStartDate(Date.valueOf("2023-09-01"));
+    studentsCourses1.setExpectedCompletionDate(Date.valueOf("2024-09-01"));
+    //受講情報2
+    StudentsCourses studentsCourses2 = new StudentsCourses();
+    studentsCourses2.setId(2);
+    studentsCourses2.setStudentId("2");
+    studentsCourses2.setCourseId("00001");
+    studentsCourses2.setStartDate(Date.valueOf("2024-01-01"));
+    studentsCourses2.setExpectedCompletionDate(Date.valueOf("2025-01-01"));
+
+    //リターンオブジェクトの作成
+    //受講生１
+    CourseDetail courseDetail1 = new CourseDetail();
+    courseDetail1.setCourse(course);
+    courseDetail1.setStudentsCourses(studentsCourses1);
+    List<CourseDetail> courseDetails1 = new ArrayList<>();
+    courseDetails1.add(courseDetail1);
+    StudentDetail studentDetail1 = new StudentDetail();
+    studentDetail1.setStudent(student1);
+    studentDetail1.setCourseDetail(courseDetails1);
+    //受講生2
+    CourseDetail courseDetail2 = new CourseDetail();
+    courseDetail2.setCourse(course);
+    courseDetail2.setStudentsCourses(studentsCourses2);
+    List<CourseDetail> courseDetails2 = new ArrayList<>();
+    courseDetails2.add(courseDetail1);
+    StudentDetail studentDetail2 = new StudentDetail();
+    studentDetail2.setStudent(student2);
+    studentDetail2.setCourseDetail(courseDetails2);
+
+    //リターンオブジェクトの作成
+    List<StudentDetail> studentDetails = new ArrayList<>();
+    studentDetails.add(studentDetail1);
+    studentDetails.add(studentDetail2);
+    return studentDetails;
   }
 
   //新規受講生詳細情報
@@ -138,4 +211,33 @@ public class TestDataFactory {
     return students;
   }
 
+  //単一受講生情報
+  public static Student createSampleStudent() {
+    //受講生情報
+    Student student = new Student();
+    student.setStudentId("1");
+    student.setName("山本太郎");
+    student.setFurigana("ヤマモトタロウ");
+    student.setNickname("タロ");
+    student.setEmail("taro@exampl.com");
+    student.setAddress("東京");
+    student.setAge(25);
+    student.setGender("男性");
+    student.undelete();//削除フラグfalse
+
+    return student;
+  }
+
+  //受講情報
+  public static StudentsCourses createSampleStudentsCourses() {
+    StudentsCourses studentsCourses = new StudentsCourses();
+    studentsCourses.setId(1);
+    studentsCourses.setStudentId("1");
+    studentsCourses.setCourseId("00001");
+    studentsCourses.setStartDate(Date.valueOf("2023-09-01"));
+    studentsCourses.setExpectedCompletionDate(Date.valueOf("2024-09-01"));
+
+    return studentsCourses;
+  }
+  
 }
