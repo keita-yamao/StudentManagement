@@ -439,7 +439,7 @@ class ValidationTest {
   @Test
   public void StudentsCourses_受講生IDが10桁以上() {
     //DTOにデータを格納
-    StudentsCourses studentsCourses = TestDataFactory.createSampleStudentsCourses();
+    StudentsCourses studentsCourses = TestDataFactory.createSampleStudentsCourse();
     studentsCourses.setStudentId("12345".repeat(3));
 
     //バリエーションチェックの結果を取得
@@ -454,7 +454,7 @@ class ValidationTest {
   @Test
   public void StudentCourses_受講生IDが未入力() {
     //DTOにデータを格納
-    StudentsCourses studentsCourses = TestDataFactory.createSampleStudentsCourses();
+    StudentsCourses studentsCourses = TestDataFactory.createSampleStudentsCourse();
     studentsCourses.setStudentId("");
 
     //バリエーションチェックの結果を取得
@@ -469,7 +469,7 @@ class ValidationTest {
   @Test
   public void StudentCourses_受講生IDにスペースが含まれている() {
     //DTOにデータを格納
-    StudentsCourses studentsCourses = TestDataFactory.createSampleStudentsCourses();
+    StudentsCourses studentsCourses = TestDataFactory.createSampleStudentsCourse();
     studentsCourses.setStudentId("12 34");
 
     //バリエーションチェックの結果を取得
@@ -484,7 +484,7 @@ class ValidationTest {
   @Test
   public void StudentCourses_コースIDが未入力の場合() {
     //DTOにデータを格納
-    StudentsCourses studentsCourses = TestDataFactory.createSampleStudentsCourses();
+    StudentsCourses studentsCourses = TestDataFactory.createSampleStudentsCourse();
     studentsCourses.setCourseId("");
 
     //バリエーションチェックの結果を取得
@@ -499,7 +499,7 @@ class ValidationTest {
   @Test
   public void StudentsCourses_コースIDにスペースが含まれている() {
     //DTOにデータを格納
-    StudentsCourses studentsCourses = TestDataFactory.createSampleStudentsCourses();
+    StudentsCourses studentsCourses = TestDataFactory.createSampleStudentsCourse();
     studentsCourses.setCourseId("12 34");
 
     //バリエーションチェックの結果を取得
@@ -514,7 +514,7 @@ class ValidationTest {
   @Test
   public void StudentsCourses_開始日付がnull() {
     //DTOにデータを格納
-    StudentsCourses studentsCourses = TestDataFactory.createSampleStudentsCourses();
+    StudentsCourses studentsCourses = TestDataFactory.createSampleStudentsCourse();
     studentsCourses.setStartDate(null);
 
     //バリエーションチェックの結果を取得
@@ -529,7 +529,7 @@ class ValidationTest {
   @Test
   public void StudentsCourses_修了日付がnull() {
     //DTOにデータを格納
-    StudentsCourses studentsCourses = TestDataFactory.createSampleStudentsCourses();
+    StudentsCourses studentsCourses = TestDataFactory.createSampleStudentsCourse();
     studentsCourses.setExpectedCompletionDate(null);
 
     //バリエーションチェックの結果を取得

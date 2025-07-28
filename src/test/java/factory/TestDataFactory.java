@@ -211,6 +211,74 @@ public class TestDataFactory {
     return students;
   }
 
+  //受講コース情報リスト
+  public static List<CourseDetail> createSampleCourseDetails() {
+    //コース情報
+    Course course = new Course();
+    course.setCourseId("00001");
+    course.setCourse("Javaコース");
+
+    //受講情報1
+    StudentsCourses studentsCourses1 = new StudentsCourses();
+    studentsCourses1.setId(1);
+    studentsCourses1.setStudentId("1");
+    studentsCourses1.setCourseId("00001");
+    studentsCourses1.setStartDate(Date.valueOf("2023-09-01"));
+    studentsCourses1.setExpectedCompletionDate(Date.valueOf("2024-09-01"));
+    //受講情報2
+    StudentsCourses studentsCourses2 = new StudentsCourses();
+    studentsCourses2.setId(2);
+    studentsCourses2.setStudentId("2");
+    studentsCourses2.setCourseId("00001");
+    studentsCourses2.setStartDate(Date.valueOf("2024-01-01"));
+    studentsCourses2.setExpectedCompletionDate(Date.valueOf("2025-01-01"));
+    //受講情報3
+    StudentsCourses studentsCourses3 = new StudentsCourses();
+    studentsCourses3.setId(3);
+    studentsCourses3.setStudentId("3");
+    studentsCourses3.setCourseId("00001");
+    studentsCourses3.setStartDate(Date.valueOf("2024-01-01"));
+    studentsCourses3.setExpectedCompletionDate(Date.valueOf("2025-01-01"));
+
+    //受講コース情報１
+    CourseDetail courseDetail1 = new CourseDetail();
+    courseDetail1.setCourse(course);
+    courseDetail1.setStudentsCourses(studentsCourses1);
+    //受講コース情報２
+    CourseDetail courseDetail2 = new CourseDetail();
+    courseDetail2.setCourse(course);
+    courseDetail2.setStudentsCourses(studentsCourses2);
+    //受講コース情報２
+    CourseDetail courseDetail3 = new CourseDetail();
+    courseDetail3.setCourse(course);
+    courseDetail3.setStudentsCourses(studentsCourses3);
+    //リターンオブジェクトの作成
+    List<CourseDetail> courseDetails = new ArrayList<>();
+    courseDetails.add(courseDetail1);
+    courseDetails.add(courseDetail2);
+    courseDetails.add(courseDetail3);
+
+    return courseDetails;
+  }
+
+  //コース情報一覧
+  public static List<Course> createSampleCourses() {
+    //コース情報1
+    Course course1 = new Course();
+    course1.setCourseId("00001");
+    course1.setCourse("Javaコース");
+    //コース情報1
+    Course course2 = new Course();
+    course2.setCourseId("00002");
+    course2.setCourse("AWSコース");
+    //リターン用オブジェクトの作成
+    List<Course> courses = new ArrayList<>();
+    courses.add(course1);
+    courses.add(course2);
+
+    return courses;
+  }
+
   //単一受講生情報
   public static Student createSampleStudent() {
     //受講生情報
@@ -229,7 +297,7 @@ public class TestDataFactory {
   }
 
   //受講情報
-  public static StudentsCourses createSampleStudentsCourses() {
+  public static StudentsCourses createSampleStudentsCourse() {
     StudentsCourses studentsCourses = new StudentsCourses();
     studentsCourses.setId(1);
     studentsCourses.setStudentId("1");
@@ -239,5 +307,29 @@ public class TestDataFactory {
 
     return studentsCourses;
   }
-  
+
+  //受講情報一覧
+  public static List<StudentsCourses> createSampleStudentsCourses() {
+    //受講情報１
+    StudentsCourses studentsCourses1 = new StudentsCourses();
+    studentsCourses1.setId(1);
+    studentsCourses1.setStudentId("1");
+    studentsCourses1.setCourseId("00001");
+    studentsCourses1.setStartDate(Date.valueOf("2023-09-01"));
+    studentsCourses1.setExpectedCompletionDate(Date.valueOf("2024-09-01"));
+    //受講情報2
+    StudentsCourses studentsCourses2 = new StudentsCourses();
+    studentsCourses2.setId(2);
+    studentsCourses2.setStudentId("2");
+    studentsCourses2.setCourseId("00002");
+    studentsCourses2.setStartDate(Date.valueOf("2024-01-01"));
+    studentsCourses2.setExpectedCompletionDate(Date.valueOf("2025-01-01"));
+
+    //リターン用オブジェクトの作成
+    List<StudentsCourses> studentsCoursesList = new ArrayList<>();
+    studentsCoursesList.add(studentsCourses1);
+    studentsCoursesList.add(studentsCourses2);
+
+    return studentsCoursesList;
+  }
 }
