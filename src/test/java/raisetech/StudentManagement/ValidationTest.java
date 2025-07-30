@@ -4,12 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import factory.TestDataFactory;
 import jakarta.servlet.ServletException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -59,7 +59,7 @@ class ValidationTest {
     }
     //検証
     assertThat(messages).isEqualTo(
-        List.of("半角スペースと全角スペースは使用できません", "入力できる値は10文字までです"));
+        List.of("入力できる値は10文字までです", "半角スペースと全角スペースは使用できません"));
   }
 
   /*
@@ -198,7 +198,7 @@ class ValidationTest {
   @Test
   public void Studnet_受講生IDが10文字以上() {
     //DTOにデータを格納
-    Student student = TestDataFactory.createSampleStudent();
+    Student student = getStudent();
     student.setStudentId("12345678910");
 
     //バリエーションチェックの結果を取得
@@ -212,7 +212,7 @@ class ValidationTest {
   @Test
   public void Student_受講生ID入力されていない() {
     //DTOにデータを格納
-    Student student = TestDataFactory.createSampleStudent();
+    Student student = getStudent();
     student.setStudentId("");
 
     //バリエーションチェックの結果を取得
@@ -226,7 +226,8 @@ class ValidationTest {
   @Test
   public void Studnet_受講生IDにスペースが含まれている() {
     //DTOにデータを格納
-    Student student = TestDataFactory.createSampleStudent();
+    //受講生情報
+    Student student = getStudent();
     student.setStudentId("12 45");
 
     //バリエーションチェックの結果を取得
@@ -241,7 +242,7 @@ class ValidationTest {
   @Test
   public void Student_名前が60文字以上() {
     //DTOにデータを格納
-    Student student = TestDataFactory.createSampleStudent();
+    Student student = getStudent();
     student.setName("あいうえお".repeat(13));
 
     //バリエーションチェックの結果を取得
@@ -256,7 +257,7 @@ class ValidationTest {
   @Test
   public void Studnet_名前が未入力() {
     //DTOにデータを格納
-    Student student = TestDataFactory.createSampleStudent();
+    Student student = getStudent();
     student.setName("");
 
     //バリエーションチェックの結果を取得
@@ -271,7 +272,7 @@ class ValidationTest {
   @Test
   public void Student_フリガナが60文字以上() {
     //DTOにデータを格納
-    Student student = TestDataFactory.createSampleStudent();
+    Student student = getStudent();
     student.setFurigana("アイウエオ".repeat(13));
 
     //バリエーションチェックの結果を取得
@@ -286,7 +287,7 @@ class ValidationTest {
   @Test
   public void Student_フリガナが未入力() {
     //DTOにデータを格納
-    Student student = TestDataFactory.createSampleStudent();
+    Student student = getStudent();
     student.setFurigana("");
 
     //バリエーションチェックの結果を取得
@@ -301,7 +302,7 @@ class ValidationTest {
   @Test
   public void Student_ニックネームが60文字以上() {
     //DTOにデータを格納
-    Student student = TestDataFactory.createSampleStudent();
+    Student student = getStudent();
     student.setNickname("アイウエオ".repeat(13));
 
     //バリエーションチェックの結果を取得
@@ -316,7 +317,7 @@ class ValidationTest {
   @Test
   public void Student_ニックネームが未入力() {
     //DTOにデータを格納
-    Student student = TestDataFactory.createSampleStudent();
+    Student student = getStudent();
     student.setNickname("");
 
     //バリエーションチェックの結果を取得
@@ -331,7 +332,7 @@ class ValidationTest {
   @Test
   public void Student_無効な形式のメールアドレス() {
     //DTOにデータを格納
-    Student student = TestDataFactory.createSampleStudent();
+    Student student = getStudent();
     student.setEmail("無効なメールアドレス");
 
     //バリエーションチェックの結果を取得
@@ -346,7 +347,7 @@ class ValidationTest {
   @Test
   public void Student_メールアドレスが未入力() {
     //DTOにデータを格納
-    Student student = TestDataFactory.createSampleStudent();
+    Student student = getStudent();
     student.setEmail(null);
 
     //バリエーションチェックの結果を取得
@@ -361,7 +362,7 @@ class ValidationTest {
   @Test
   public void Student_住所が161文字以上() {
     //DTOにデータを格納
-    Student student = TestDataFactory.createSampleStudent();
+    Student student = getStudent();
     student.setAddress("0123456789".repeat(17));
 
     //バリエーションチェックの結果を取得
@@ -376,7 +377,7 @@ class ValidationTest {
   @Test
   public void Student_年齢の最小値が0以下() {
     //DTOにデータを格納
-    Student student = TestDataFactory.createSampleStudent();
+    Student student = getStudent();
     student.setAge(-1);
 
     //バリエーションチェックの結果を取得
@@ -391,7 +392,7 @@ class ValidationTest {
   @Test
   public void Student_年齢の最大値が120以上() {
     //DTOにデータを格納
-    Student student = TestDataFactory.createSampleStudent();
+    Student student = getStudent();
     student.setAge(121);
 
     //バリエーションチェックの結果を取得
@@ -406,7 +407,7 @@ class ValidationTest {
   @Test
   public void Student_性別が20文字以上() {
     //DTOにデータを格納
-    Student student = TestDataFactory.createSampleStudent();
+    Student student = getStudent();
     student.setGender("あいうえお".repeat(5));
 
     //バリエーションチェックの結果を取得
@@ -421,7 +422,7 @@ class ValidationTest {
   @Test
   public void Student_備考が255文字以上() {
     //DTOにデータを格納
-    Student student = TestDataFactory.createSampleStudent();
+    Student student = getStudent();
     student.setRemark("あいうえお".repeat(52));
 
     //バリエーションチェックの結果を取得
@@ -439,7 +440,7 @@ class ValidationTest {
   @Test
   public void StudentsCourses_受講生IDが10桁以上() {
     //DTOにデータを格納
-    StudentsCourses studentsCourses = TestDataFactory.createSampleStudentsCourses();
+    StudentsCourses studentsCourses = getSampleStudentsCourse();
     studentsCourses.setStudentId("12345".repeat(3));
 
     //バリエーションチェックの結果を取得
@@ -454,7 +455,7 @@ class ValidationTest {
   @Test
   public void StudentCourses_受講生IDが未入力() {
     //DTOにデータを格納
-    StudentsCourses studentsCourses = TestDataFactory.createSampleStudentsCourses();
+    StudentsCourses studentsCourses = getSampleStudentsCourse();
     studentsCourses.setStudentId("");
 
     //バリエーションチェックの結果を取得
@@ -469,7 +470,7 @@ class ValidationTest {
   @Test
   public void StudentCourses_受講生IDにスペースが含まれている() {
     //DTOにデータを格納
-    StudentsCourses studentsCourses = TestDataFactory.createSampleStudentsCourses();
+    StudentsCourses studentsCourses = getSampleStudentsCourse();
     studentsCourses.setStudentId("12 34");
 
     //バリエーションチェックの結果を取得
@@ -484,7 +485,7 @@ class ValidationTest {
   @Test
   public void StudentCourses_コースIDが未入力の場合() {
     //DTOにデータを格納
-    StudentsCourses studentsCourses = TestDataFactory.createSampleStudentsCourses();
+    StudentsCourses studentsCourses = getSampleStudentsCourse();
     studentsCourses.setCourseId("");
 
     //バリエーションチェックの結果を取得
@@ -499,7 +500,7 @@ class ValidationTest {
   @Test
   public void StudentsCourses_コースIDにスペースが含まれている() {
     //DTOにデータを格納
-    StudentsCourses studentsCourses = TestDataFactory.createSampleStudentsCourses();
+    StudentsCourses studentsCourses = getSampleStudentsCourse();
     studentsCourses.setCourseId("12 34");
 
     //バリエーションチェックの結果を取得
@@ -514,7 +515,7 @@ class ValidationTest {
   @Test
   public void StudentsCourses_開始日付がnull() {
     //DTOにデータを格納
-    StudentsCourses studentsCourses = TestDataFactory.createSampleStudentsCourses();
+    StudentsCourses studentsCourses = getSampleStudentsCourse();
     studentsCourses.setStartDate(null);
 
     //バリエーションチェックの結果を取得
@@ -529,7 +530,7 @@ class ValidationTest {
   @Test
   public void StudentsCourses_修了日付がnull() {
     //DTOにデータを格納
-    StudentsCourses studentsCourses = TestDataFactory.createSampleStudentsCourses();
+    StudentsCourses studentsCourses = getSampleStudentsCourse();
     studentsCourses.setExpectedCompletionDate(null);
 
     //バリエーションチェックの結果を取得
@@ -541,5 +542,36 @@ class ValidationTest {
         .containsOnly("修了日付が未入力です");
   }
 
+  /*
+   * テスト用データ
+   * */
+  /*受講生情報*/
+  private static Student getStudent() {
+    //受講生情報
+    Student student1 = new Student();
+    student1.setStudentId("1");
+    student1.setName("山本太郎");
+    student1.setFurigana("ヤマモトタロウ");
+    student1.setNickname("タロ");
+    student1.setEmail("taro@exampl.com");
+    student1.setAddress("東京");
+    student1.setAge(25);
+    student1.setGender("男性");
+    student1.undelete();//削除フラグfalse
 
+    Student student = student1;
+    return student;
+  }
+
+  /*受講情報*/
+  private static StudentsCourses getSampleStudentsCourse() {
+    StudentsCourses studentsCourses = new StudentsCourses();
+    studentsCourses.setId(1);
+    studentsCourses.setStudentId("1");
+    studentsCourses.setCourseId("00001");
+    studentsCourses.setStartDate(Date.valueOf("2023-09-01"));
+    studentsCourses.setExpectedCompletionDate(Date.valueOf("2024-09-01"));
+
+    return studentsCourses;
+  }
 }
