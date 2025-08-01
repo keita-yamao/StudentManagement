@@ -105,16 +105,18 @@ class StudentConverterTest {
   /*単一受講生情報*/
   private static Student getSampleStudent() {
     //受講生情報
-    Student student = new Student();
-    student.setStudentId("1");
-    student.setName("山本太郎");
-    student.setFurigana("ヤマモトタロウ");
-    student.setNickname("タロ");
-    student.setEmail("taro@exampl.com");
-    student.setAddress("東京");
-    student.setAge(25);
-    student.setGender("男性");
-    student.undelete();//削除フラグfalse
+    Student student = new Student(
+        "1",
+        "山本太郎",
+        "ヤマモトタロウ",
+        "タロ",
+        "taro@exampl.com",
+        "東京",
+        25,
+        "男性",
+        null,
+        false
+    );
 
     return student;
   }
@@ -122,38 +124,45 @@ class StudentConverterTest {
   /*受講生情報一覧*/
   private static List<Student> getSampleStudents() {
     //受講生1
-    Student student1 = new Student();
-    student1.setStudentId("1");
-    student1.setName("山本太郎");
-    student1.setFurigana("ヤマモトタロウ");
-    student1.setNickname("タロ");
-    student1.setEmail("taro@exampl.com");
-    student1.setAddress("東京");
-    student1.setAge(25);
-    student1.setGender("男性");
-    student1.delete();//削除フラグtrue
+    Student student1 = new Student(
+        "1",
+        "山本太郎",
+        "ヤマモトタロウ",
+        "タロ",
+        "taro@exampl.com",
+        "東京",
+        25,
+        "男性",
+        null,
+        true
+    );
+
     //受講生2
-    Student student2 = new Student();
-    student2.setStudentId("2");
-    student2.setName("鈴木一郎");
-    student2.setFurigana("スズキイチロウ");
-    student2.setNickname("イチ");
-    student2.setEmail("ichiro@exampl.com");
-    student2.setAddress("大阪");
-    student2.setAge(30);
-    student2.setGender("男性");
-    student2.undelete();//削除フラグfalse
+    Student student2 = new Student(
+        "2",
+        "鈴木一郎",
+        "スズキイチロウ",
+        "イチ",
+        "ichiro@exampl.com",
+        "大阪",
+        30,
+        "男性",
+        null,
+        false
+    );
     //受講生3
-    Student student3 = new Student();
-    student3.setStudentId("3");
-    student3.setName("田中花子");
-    student3.setFurigana("タナカハナコ");
-    student3.setNickname("ハナ");
-    student3.setEmail("hana@exampl.com");
-    student3.setAddress("北海道");
-    student3.setAge(22);
-    student3.setGender("女性");
-    student3.undelete();//削除フラグfalse
+    Student student3 = new Student(
+        "3",
+        "田中花子",
+        "タナカハナコ",
+        "ハナ",
+        "hana@exampl.com",
+        "北海道",
+        22,
+        "女性",
+        null,
+        false
+    );
 
     //リストに格納
     List<Student> students = new ArrayList<>();
@@ -167,13 +176,9 @@ class StudentConverterTest {
   /*コース一覧*/
   private static List<Course> getSampleCourses() {
     //コース情報1
-    Course course1 = new Course();
-    course1.setCourseId("00001");
-    course1.setCourse("Javaコース");
+    Course course1 = new Course("00001", "Javaコース");
     //コース情報1
-    Course course2 = new Course();
-    course2.setCourseId("00002");
-    course2.setCourse("AWSコース");
+    Course course2 = new Course("00002", "AWSコース");
     //リターン用オブジェクトの作成
     List<Course> courses = new ArrayList<>();
     courses.add(course1);
@@ -185,44 +190,41 @@ class StudentConverterTest {
   /*受講コース情報一覧*/
   private static List<CourseDetail> getSampleCourseDetails() {
     //コース情報
-    Course course = new Course();
-    course.setCourseId("00001");
-    course.setCourse("Javaコース");
+    Course course = new Course("00001", "Javaコース");
 
     //受講情報1
-    StudentsCourses studentsCourses1 = new StudentsCourses();
-    studentsCourses1.setId(1);
-    studentsCourses1.setStudentId("1");
-    studentsCourses1.setCourseId("00001");
-    studentsCourses1.setStartDate(Date.valueOf("2023-09-01"));
-    studentsCourses1.setExpectedCompletionDate(Date.valueOf("2024-09-01"));
+    StudentsCourses studentsCourses1 = StudentsCourses.builder()
+        .id(1)
+        .studentId("1")
+        .courseId("00001")
+        .startDate(Date.valueOf("2023-09-01"))
+        .expectedCompletionDate(Date.valueOf("2024-09-01"))
+        .build();
+
     //受講情報2
-    StudentsCourses studentsCourses2 = new StudentsCourses();
-    studentsCourses2.setId(2);
-    studentsCourses2.setStudentId("2");
-    studentsCourses2.setCourseId("00001");
-    studentsCourses2.setStartDate(Date.valueOf("2024-01-01"));
-    studentsCourses2.setExpectedCompletionDate(Date.valueOf("2025-01-01"));
+    StudentsCourses studentsCourses2 = StudentsCourses.builder()
+        .id(2)
+        .studentId("2")
+        .courseId("00001")
+        .startDate(Date.valueOf("2024-01-01"))
+        .expectedCompletionDate(Date.valueOf("2025-01-01"))
+        .build();
+
     //受講情報3
-    StudentsCourses studentsCourses3 = new StudentsCourses();
-    studentsCourses3.setId(3);
-    studentsCourses3.setStudentId("3");
-    studentsCourses3.setCourseId("00001");
-    studentsCourses3.setStartDate(Date.valueOf("2024-01-01"));
-    studentsCourses3.setExpectedCompletionDate(Date.valueOf("2025-01-01"));
+    StudentsCourses studentsCourses3 = StudentsCourses.builder()
+        .id(3)
+        .studentId("3")
+        .courseId("00001")
+        .startDate(Date.valueOf("2024-01-01"))
+        .expectedCompletionDate(Date.valueOf("2025-01-01"))
+        .build();
 
     //受講コース情報１
-    CourseDetail courseDetail1 = new CourseDetail();
-    courseDetail1.setCourse(course);
-    courseDetail1.setStudentsCourses(studentsCourses1);
+    CourseDetail courseDetail1 = new CourseDetail(course, studentsCourses1);
     //受講コース情報２
-    CourseDetail courseDetail2 = new CourseDetail();
-    courseDetail2.setCourse(course);
-    courseDetail2.setStudentsCourses(studentsCourses2);
+    CourseDetail courseDetail2 = new CourseDetail(course, studentsCourses2);
     //受講コース情報２
-    CourseDetail courseDetail3 = new CourseDetail();
-    courseDetail3.setCourse(course);
-    courseDetail3.setStudentsCourses(studentsCourses3);
+    CourseDetail courseDetail3 = new CourseDetail(course, studentsCourses3);
     //リターンオブジェクトの作成
     List<CourseDetail> courseDetails = new ArrayList<>();
     courseDetails.add(courseDetail1);
@@ -235,19 +237,22 @@ class StudentConverterTest {
   /*受講情報一覧*/
   private static List<StudentsCourses> getSampleStudentsCourses() {
     //受講情報１
-    StudentsCourses studentsCourses1 = new StudentsCourses();
-    studentsCourses1.setId(1);
-    studentsCourses1.setStudentId("1");
-    studentsCourses1.setCourseId("00001");
-    studentsCourses1.setStartDate(Date.valueOf("2023-09-01"));
-    studentsCourses1.setExpectedCompletionDate(Date.valueOf("2024-09-01"));
+    StudentsCourses studentsCourses1 = StudentsCourses.builder()
+        .id(1)
+        .studentId("1")
+        .courseId("00001")
+        .startDate(Date.valueOf("2023-09-01"))
+        .expectedCompletionDate(Date.valueOf("2024-09-01"))
+        .build();
+
     //受講情報2
-    StudentsCourses studentsCourses2 = new StudentsCourses();
-    studentsCourses2.setId(2);
-    studentsCourses2.setStudentId("2");
-    studentsCourses2.setCourseId("00002");
-    studentsCourses2.setStartDate(Date.valueOf("2024-01-01"));
-    studentsCourses2.setExpectedCompletionDate(Date.valueOf("2025-01-01"));
+    StudentsCourses studentsCourses2 = StudentsCourses.builder()
+        .id(2)
+        .studentId("2")
+        .courseId("00002")
+        .startDate(Date.valueOf("2024-01-01"))
+        .expectedCompletionDate(Date.valueOf("2025-01-01"))
+        .build();
 
     //リターン用オブジェクトの作成
     List<StudentsCourses> studentsCoursesList = new ArrayList<>();
