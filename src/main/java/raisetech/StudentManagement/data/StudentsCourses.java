@@ -6,12 +6,12 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.sql.Date;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Builder;
+import lombok.Data;
 
 @Schema(description = "受講情報")
-@Getter
-@Setter
+@Data
+@Builder
 public class StudentsCourses {
 
   private int id;

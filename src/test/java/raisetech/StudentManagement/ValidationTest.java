@@ -548,29 +548,31 @@ class ValidationTest {
   /*受講生情報*/
   private static Student getStudent() {
     //受講生情報
-    Student student1 = new Student();
-    student1.setStudentId("1");
-    student1.setName("山本太郎");
-    student1.setFurigana("ヤマモトタロウ");
-    student1.setNickname("タロ");
-    student1.setEmail("taro@exampl.com");
-    student1.setAddress("東京");
-    student1.setAge(25);
-    student1.setGender("男性");
-    student1.undelete();//削除フラグfalse
+    Student student = new Student(
+        "1",
+        "山本太郎",
+        "ヤマモトタロウ",
+        "タロ",
+        "taro@exampl.com",
+        "東京",
+        25,
+        "男性",
+        null,
+        false
+    );
 
-    Student student = student1;
     return student;
   }
 
   /*受講情報*/
   private static StudentsCourses getSampleStudentsCourse() {
-    StudentsCourses studentsCourses = new StudentsCourses();
-    studentsCourses.setId(1);
-    studentsCourses.setStudentId("1");
-    studentsCourses.setCourseId("00001");
-    studentsCourses.setStartDate(Date.valueOf("2023-09-01"));
-    studentsCourses.setExpectedCompletionDate(Date.valueOf("2024-09-01"));
+    StudentsCourses studentsCourses = StudentsCourses.builder()
+        .id(1)
+        .studentId("1")
+        .courseId("00001")
+        .startDate(Date.valueOf("2023-09-01"))
+        .expectedCompletionDate(Date.valueOf("2024-09-01"))
+        .build();
 
     return studentsCourses;
   }
