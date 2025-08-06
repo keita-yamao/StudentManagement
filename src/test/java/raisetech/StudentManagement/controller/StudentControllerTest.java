@@ -84,11 +84,14 @@ class StudentControllerTest {
 
   /*
    *getFilteredStudentDetailListメソッドのテスト
-   * service.searchFilterStudentDetailListメソッドの呼び出し検証
+   * 1.service.searchFilterStudentDetailListメソッドの呼び出し検証
+   * 2.JSONの値が未指定の場合にHTTP Status200で正常処理されるか検証
    */
   @Test
   void 受講生詳細情報の絞り込み検索_サービス処理の呼び出しの検証() throws Exception {
     //テストデータのセット
+    String name = "山本";
+    String furigana = "ヤマモト";
     Integer minAge = 0;
     Integer maxAge = 120;
     Boolean isDeleted = false;
@@ -96,11 +99,13 @@ class StudentControllerTest {
     List<StudentDetail> studentDetails = getSampleStudentDetails();
 
     //スタブ化
-    when(studentService.searchFilterStudentDetailList(minAge, maxAge, isDeleted,
+    when(studentService.searchFilterStudentDetailList(name, furigana, minAge, maxAge, isDeleted,
         courseId)).thenReturn(studentDetails);
 
     //実行
     mockMvc.perform(MockMvcRequestBuilders.get("/students")
+            .param("name", name)
+            .param("furigana", furigana)
             .param("minAge", String.valueOf(minAge))
             .param("maxAge", String.valueOf(maxAge))
             .param("isDeleted", String.valueOf(isDeleted))
@@ -110,8 +115,23 @@ class StudentControllerTest {
 
     //検証
     Mockito.verify(studentService, Mockito.times(1))
-        .searchFilterStudentDetailList(minAge, maxAge, isDeleted, courseId);
+        .searchFilterStudentDetailList(name, furigana, minAge, maxAge, isDeleted, courseId);
 
+  }
+
+  @Test
+  void 受講生詳細情報検索_検索条件が指定されなかった場合に正常処理されるか() throws Exception {
+    //テストデータのセット
+    List<StudentDetail> studentDetails = getSampleStudentDetails();
+    //スタブ化
+    when(studentService.searchFilterStudentDetailList(null, null, null, null, null,
+        null)).thenReturn(studentDetails);
+    //実行
+    mockMvc.perform(MockMvcRequestBuilders.get("/students"))
+        .andExpect(MockMvcResultMatchers.status().isOk());
+
+    Mockito.verify(studentService, Mockito.times(1))
+        .searchFilterStudentDetailList(null, null, null, null, null, null);
   }
 
   /*

@@ -41,11 +41,11 @@ class ValidationTest {
    *getStudentDetailByIdメソッドのバリエーションテスト
    */
   @Test
-  public void 単一の受講生詳細情報の検索_受講生IDの入力値上限オーバーかつスペースが含まれている()
+  public void 単一の受講生詳細情報の検索_受講生IDの入力値上限オーバー()
       throws Exception {
     //実行時に桁数オーバーの場合の例外がServletExceptionであることを検証し取得
     Exception exception = assertThrows(ServletException.class, () -> {
-      mockMvc.perform(MockMvcRequestBuilders.get("/students/01234 56789"))
+      mockMvc.perform(MockMvcRequestBuilders.get("/students/012345678910"))
           .andReturn();
     });
     //ServletExceptionにラップされた入力チェック時の例外がConstraintViolationExceptionであることを確認し取得
@@ -59,7 +59,29 @@ class ValidationTest {
     }
     //検証
     assertThat(messages).isEqualTo(
-        List.of("入力できる値は10文字までです", "半角スペースと全角スペースは使用できません"));
+        List.of("入力できる値は10文字までです"));
+  }
+
+  @Test
+  public void 単一の受講生詳細情報の検索_受講生IDにスペースが含まれている()
+      throws Exception {
+    //実行時に桁数オーバーの場合の例外がServletExceptionであることを検証し取得
+    Exception exception = assertThrows(ServletException.class, () -> {
+      mockMvc.perform(MockMvcRequestBuilders.get("/students/12 45"))
+          .andReturn();
+    });
+    //ServletExceptionにラップされた入力チェック時の例外がConstraintViolationExceptionであることを確認し取得
+    ConstraintViolationException constraintViolationException = assertInstanceOf(
+        ConstraintViolationException.class, exception.getCause());
+    // violations からメッセージ部分だけを抜き出す
+    Set<ConstraintViolation<?>> violations = constraintViolationException.getConstraintViolations();
+    List<String> messages = new ArrayList<>();
+    for (ConstraintViolation<?> violation : violations) {
+      messages.add(violation.getMessage());
+    }
+    //検証
+    assertThat(messages).isEqualTo(
+        List.of("半角スペースと全角スペースは使用できません"));
   }
 
   /*

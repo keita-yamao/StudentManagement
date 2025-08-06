@@ -37,7 +37,8 @@ public interface StudentRepository {
    * @param isDeleted 論理削除の真偽値
    * @return 受講生情報一覧(条件に一致するもの)
    */
-  List<Student> searchFilterStudent(Integer minAge, Integer maxAge, Boolean isDeleted);
+  List<Student> searchFilterStudent(String name, String furigana, Integer minAge, Integer maxAge,
+      Boolean isDeleted);
 
   /**
    * コース情報の全件検索

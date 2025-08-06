@@ -35,8 +35,29 @@ class StudentRepositoryTest {
   @Test
   @DisplayName("受講生を年齢・論理削除の真偽値で絞り込み検索できること")
   void searchFilterStudentTest01() {
-    List<Student> actual = sut.searchFilterStudent(20, 29, false);
+    List<Student> actual = sut.searchFilterStudent(null, null, 20, 29, false);
     assertThat(actual.size()).isEqualTo(3);
+  }
+
+  @Test
+  @DisplayName("受講生を名前で絞り込み検索できること")
+  void searchFilterStudentTest02() {
+    List<Student> actual = sut.searchFilterStudent("佐", null, null, null, null);
+    assertThat(actual.size()).isEqualTo(2);
+  }
+
+  @Test
+  @DisplayName("受講生をフリガナで絞り込み検索できること")
+  void searchFilterStudentTest03() {
+    List<Student> actual = sut.searchFilterStudent(null, "サトウ", null, null, null);
+    assertThat(actual.size()).isEqualTo(2);
+  }
+
+  @Test
+  @DisplayName("指定がなかった場合に全件検索できること")
+  void searchFilterStudentTest04() {
+    List<Student> actual = sut.searchFilterStudent(null, null, null, null, null);
+    assertThat(actual.size()).isEqualTo(6);
   }
 
   @Test

@@ -80,11 +80,14 @@ public class StudentController {
   @Operation(summary = "受講生詳細情報の絞り込み検索", description = "受講生詳細情報を年齢・削除済み・コースIDを指定して検索します。")
   @GetMapping("/students")
   public List<StudentDetail> getFilteredStudentDetailList(
+      @RequestParam(required = false) @Size(max = 60, message = "名前は60文字までです") String name,
+      @RequestParam(required = false) @Size(max = 60, message = "フリガナは60文字までです") String furigana,
       @RequestParam(required = false) @Min(value = 0, message = "年齢の最小値は0です") Integer minAge,
       @RequestParam(required = false) @Max(value = 120, message = "年齢の最大値は120です") Integer maxAge,
       @RequestParam(required = false) Boolean isDeleted,
       @RequestParam(required = false) @Size(min = 5, max = 5, message = "コースIDは5文字で入力してください") String courseId) {
-    return service.searchFilterStudentDetailList(minAge, maxAge, isDeleted, courseId);
+    return service.searchFilterStudentDetailList(name, furigana, minAge, maxAge, isDeleted,
+        courseId);
   }
 
   /**
