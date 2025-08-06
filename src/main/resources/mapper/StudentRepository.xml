@@ -16,6 +16,12 @@
   <!--受講生の絞り込み検索-->
   <select id="searchFilterStudent" resultType="raisetech.StudentManagement.data.Student">
     SELECT * FROM students WHERE 1=1
+    <if test="name != null and name !='' ">
+      AND name LIKE CONCAT ('%',#{name},'%')
+    </if>
+    <if test="furigana != null">
+      AND furigana LIKE CONCAT ('%',#{furigana},'%')
+    </if>
     <if test="isDeleted == true">
       AND is_deleted = true
     </if>

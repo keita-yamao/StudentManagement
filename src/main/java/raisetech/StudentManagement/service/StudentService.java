@@ -81,10 +81,12 @@ public class StudentService {
    * @param courseId  コースID
    * @return 受講生詳細情報一覧(条件に一致するもの)
    */
-  public List<StudentDetail> searchFilterStudentDetailList(Integer minAge, Integer maxAge,
+  public List<StudentDetail> searchFilterStudentDetailList(String name, String furigana,
+      Integer minAge, Integer maxAge,
       Boolean isDeleted, String courseId) {
     //テーブルデータを各オブジェクトに格納
-    List<Student> students = repository.searchFilterStudent(minAge, maxAge, isDeleted);
+    List<Student> students = repository.searchFilterStudent(name, furigana, minAge, maxAge,
+        isDeleted);
     List<Course> courses = repository.searchCourses();
     List<StudentsCourses> studentsCourses = repository.searchFilterStudentsCourses(courseId);
     //受講情報一覧とコース情報一覧のコンバート処理

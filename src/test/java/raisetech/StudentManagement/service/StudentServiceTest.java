@@ -144,17 +144,17 @@ class StudentServiceTest {
     List<CourseDetail> courseDetails = new ArrayList<>();
 
     //リポジトリのスタブ化
-    when(repository.searchFilterStudent(anyInt(), anyInt(), anyBoolean()))
+    when(repository.searchFilterStudent(anyString(), anyString(), anyInt(), anyInt(), anyBoolean()))
         .thenReturn(students);
     when(repository.searchCourses()).thenReturn(courses);
     when(repository.searchFilterStudentsCourses(anyString())).thenReturn(studentsCourses);
 
     //実行
-    sut.searchFilterStudentDetailList(0, 30, false, "00001");
+    sut.searchFilterStudentDetailList("山本", "ヤマモト", 0, 30, false, "00001");
 
     //検証
     verify(repository, times(1))
-        .searchFilterStudent(anyInt(), anyInt(), anyBoolean());
+        .searchFilterStudent(anyString(), anyString(), anyInt(), anyInt(), anyBoolean());
     verify(repository, times(1)).searchCourses();
     verify(repository, times(1)).searchFilterStudentsCourses(anyString());
     verify(converter, times(1)).createCourseDetails(studentsCourses, courses);
