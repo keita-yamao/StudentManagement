@@ -3,6 +3,7 @@ package raisetech.StudentManagement.repository;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import raisetech.StudentManagement.data.Course;
+import raisetech.StudentManagement.data.CourseStatus;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentsCourses;
 
@@ -18,8 +19,6 @@ public interface StudentRepository {
    * @return 受講生一覧(全件)
    */
   List<Student> searchStudent();
-
-  //todo:削除フラグのある受講生を入力された場合の例外処理の作成
 
   /**
    * 受講生をstudent_idで検索(論理削除済みを除く)
@@ -89,5 +88,26 @@ public interface StudentRepository {
    * @param studentsCourses 受講情報
    */
   void updateStudentCourses(StudentsCourses studentsCourses);
+
+  /**
+   * 受講状態の全件検索
+   *
+   * @return 受講状態
+   */
+  List<CourseStatus> searchCourseStatuses();
+
+  /**
+   * 受講状態の登録
+   *
+   * @param courseStatus 　受講状態
+   */
+  void insertCourseStatus(CourseStatus courseStatus);
+
+  /**
+   * 受講状態の更新
+   *
+   * @param courseStatus 受講状態
+   */
+  void updateCourseStatuses(CourseStatus courseStatus);
 
 }

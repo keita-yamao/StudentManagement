@@ -9,8 +9,10 @@ import org.junit.jupiter.api.Test;
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import raisetech.StudentManagement.data.Course;
+import raisetech.StudentManagement.data.CourseStatus;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentsCourses;
+import raisetech.StudentManagement.domain.enums.CourseStatusType;
 
 @MybatisTest
 class StudentRepositoryTest {
@@ -130,6 +132,37 @@ class StudentRepositoryTest {
     assertThat(actual.get(0).getCourseId()).isEqualTo("00002");
   }
 
+  @Test
+  @DisplayName("受講状態の全件検索ができること")
+  void searchCourseStatusTest01() {
+    List<CourseStatus> actual = sut.searchCourseStatuses();
+    assertThat(actual.size()).isEqualTo(6);
+  }
+
+  @Test
+  @DisplayName("受講状態が登録できること")
+  void insertCourseStatusTest01() {
+    //テスト用データのセット
+    CourseStatus courseStatus = createNewCourseStatuses();
+    //実行
+    sut.insertCourseStatus(courseStatus);
+    //検証
+    List<CourseStatus> actual = sut.searchCourseStatuses();
+    assertThat(actual.size()).isEqualTo(7);
+  }
+
+  @Test
+  @DisplayName("受講状態が更新できること")
+  void updateCourseStatusesTest01() {
+    //テスト用データのセット
+    CourseStatus courseStatus = new CourseStatus(3, CourseStatusType.ENROLLED.getLabel());
+    //実行
+    sut.updateCourseStatuses(courseStatus);
+    //検証
+    List<CourseStatus> actual = sut.searchCourseStatuses();
+    assertThat(actual.get(2).getStatus()).isEqualTo(CourseStatusType.ENROLLED.getLabel());
+  }
+
   /*
    * テスト用データ
    * */
@@ -197,5 +230,10 @@ class StudentRepositoryTest {
         .build();
 
     return studentsCourses;
+  }
+
+  /*新規登録時の受講状況*/
+  private static CourseStatus createNewCourseStatuses() {
+    return new CourseStatus(1, "仮申込");
   }
 }

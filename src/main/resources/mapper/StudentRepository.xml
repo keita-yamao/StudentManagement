@@ -63,7 +63,7 @@
   </insert>
 
   <!--受講情報の追加-->
-  <insert id="insertStudentCourse">
+  <insert id="insertStudentCourse" useGeneratedKeys="true" keyProperty="id">
     INSERT INTO students_courses (student_id,course_id,start_date,expected_completion_date)
     VALUES (#{studentId},#{courseId},#{startDate},#{expectedCompletionDate})
   </insert>
@@ -79,4 +79,21 @@
   <update id="updateStudentCourses">
     UPDATE students_courses SET course_id=#{courseId} WHERE id=#{id}
   </update>
+
+  <!--受講状態の検索-->
+  <select id="searchCourseStatuses" resultType="raisetech.StudentManagement.data.CourseStatus">
+    SELECT * FROM course_statuses
+  </select>
+
+  <!--受講状態の追加-->
+  <insert id="insertCourseStatus">
+    INSERT INTO course_statuses (students_courses_id,status)
+    VALUES(#{studentsCoursesId},#{status})
+  </insert>
+
+  <!--受講状態の更新-->
+  <update id="updateCourseStatuses">
+    UPDATE course_statuses SET status=#{status} WHERE students_courses_id=#{studentsCoursesId}
+  </update>
+
 </mapper>

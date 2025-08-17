@@ -12,10 +12,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import raisetech.StudentManagement.data.Course;
+import raisetech.StudentManagement.data.CourseStatus;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentsCourses;
-import raisetech.StudentManagement.domein.CourseDetail;
-import raisetech.StudentManagement.domein.StudentDetail;
+import raisetech.StudentManagement.domain.CourseDetail;
+import raisetech.StudentManagement.domain.StudentDetail;
+import raisetech.StudentManagement.domain.StudentsCoursesDetail;
+import raisetech.StudentManagement.domain.enums.CourseStatusType;
 
 @ExtendWith(MockitoExtension.class)
 class StudentConverterTest {
@@ -39,21 +42,25 @@ class StudentConverterTest {
     assertThat(result)
         .extracting(sd -> sd.getStudent().getStudentId(),
             sd -> sd.getStudent().getName(),
-            sd -> sd.getCourseDetail().getFirst().getStudentsCourses().getId(),
-            sd -> sd.getCourseDetail().getFirst().getStudentsCourses().getStudentId())
+            sd -> sd.getCourseDetail().getFirst().getStudentsCoursesDetail().getStudentsCourses()
+                .getId(),
+            sd -> sd.getCourseDetail().getFirst().getStudentsCoursesDetail().getStudentsCourses()
+                .getStudentId())
         .containsExactly(
             Tuple.tuple(students.get(0).getStudentId(),
                 students.get(0).getName(),
-                courseDetails.get(0).getStudentsCourses().getId(),
-                courseDetails.get(0).getStudentsCourses().getStudentId()),
+                courseDetails.get(0).getStudentsCoursesDetail().getStudentsCourses().getId(),
+                courseDetails.get(0).getStudentsCoursesDetail().getStudentsCourses()
+                    .getStudentId()),
             Tuple.tuple(students.get(1).getStudentId(),
                 students.get(1).getName(),
-                courseDetails.get(1).getStudentsCourses().getId(),
-                courseDetails.get(1).getStudentsCourses().getStudentId()),
+                courseDetails.get(1).getStudentsCoursesDetail().getStudentsCourses().getId(),
+                courseDetails.get(1).getStudentsCoursesDetail().getStudentsCourses()
+                    .getStudentId()),
             Tuple.tuple(students.get(2).getStudentId(),
                 students.get(2).getName(),
-                courseDetails.get(2).getStudentsCourses().getId(),
-                courseDetails.get(2).getStudentsCourses().getStudentId())
+                courseDetails.get(2).getStudentsCoursesDetail().getStudentsCourses().getId(),
+                courseDetails.get(2).getStudentsCoursesDetail().getStudentsCourses().getStudentId())
         );
   }
 
@@ -68,12 +75,14 @@ class StudentConverterTest {
     //検証
     assertThat(result).extracting(sd -> sd.getStudent().getStudentId(),
             sd -> sd.getStudent().getName(),
-            sd -> sd.getCourseDetail().getFirst().getStudentsCourses().getId(),
-            sd -> sd.getCourseDetail().getFirst().getStudentsCourses().getStudentId())
+            sd -> sd.getCourseDetail().getFirst().getStudentsCoursesDetail().getStudentsCourses()
+                .getId(),
+            sd -> sd.getCourseDetail().getFirst().getStudentsCoursesDetail().getStudentsCourses()
+                .getStudentId())
         .containsExactly(student.getStudentId(),
             student.getName(),
-            courseDetails.get(0).getStudentsCourses().getId(),
-            courseDetails.get(0).getStudentsCourses().getStudentId()
+            courseDetails.get(0).getStudentsCoursesDetail().getStudentsCourses().getId(),
+            courseDetails.get(0).getStudentsCoursesDetail().getStudentsCourses().getStudentId()
         );
   }
 
@@ -82,18 +91,21 @@ class StudentConverterTest {
   @DisplayName("受講情報に紐づくコース情報のマッピング処理が出来ているか")
   void createCourseDetailsTest() {
     //テストデータのセット
-    List<StudentsCourses> studentsCourses = getSampleStudentsCourses();
+    List<StudentsCoursesDetail> studentsCoursesDetails = getSampleStudentsCoursesDetails();
     List<Course> courses = getSampleCourses();
     //実行
-    List<CourseDetail> result = sut.createCourseDetails(studentsCourses, courses);
+    List<CourseDetail> result = sut.createCourseDetails(studentsCoursesDetails, courses);
     //検証
-    assertThat(result).extracting(cd -> cd.getStudentsCourses().getCourseId(),
+    assertThat(result).extracting(
+            cd -> cd.getStudentsCoursesDetail().getStudentsCourses().getCourseId(),
             cd -> cd.getCourse().getCourseId(),
             cd -> cd.getCourse().getCourse())
         .containsExactly(
-            Tuple.tuple(studentsCourses.get(0).getCourseId(), courses.get(0).getCourseId(),
+            Tuple.tuple(studentsCoursesDetails.get(0).getStudentsCourses().getCourseId(),
+                courses.get(0).getCourseId(),
                 courses.get(0).getCourse()),
-            Tuple.tuple(studentsCourses.get(1).getCourseId(), courses.get(1).getCourseId(),
+            Tuple.tuple(studentsCoursesDetails.get(1).getStudentsCourses().getCourseId(),
+                courses.get(1).getCourseId(),
                 courses.get(1).getCourse())
         );
   }
@@ -101,7 +113,6 @@ class StudentConverterTest {
   /*
    * テストデータ
    * */
-
   /*単一受講生情報*/
   private static Student getSampleStudent() {
     //受講生情報
@@ -219,12 +230,25 @@ class StudentConverterTest {
         .expectedCompletionDate(Date.valueOf("2025-01-01"))
         .build();
 
+    //受講状態1
+    CourseStatus courseStatus1 = new CourseStatus(1, CourseStatusType.COMPLETED.getLabel());
+    //受講状態2
+    CourseStatus courseStatus2 = new CourseStatus(2, CourseStatusType.PROVISIONAL.getLabel());
+    //受講状態3
+    CourseStatus courseStatus3 = new CourseStatus(3, CourseStatusType.OFFICIAL.getLabel());
+
     //受講コース情報１
-    CourseDetail courseDetail1 = new CourseDetail(course, studentsCourses1);
+    StudentsCoursesDetail studentsCoursesDetail1 = new StudentsCoursesDetail(studentsCourses1,
+        courseStatus1);
+    CourseDetail courseDetail1 = new CourseDetail(course, studentsCoursesDetail1);
     //受講コース情報２
-    CourseDetail courseDetail2 = new CourseDetail(course, studentsCourses2);
+    StudentsCoursesDetail studentsCoursesDetail2 = new StudentsCoursesDetail(studentsCourses2,
+        courseStatus2);
+    CourseDetail courseDetail2 = new CourseDetail(course, studentsCoursesDetail2);
     //受講コース情報２
-    CourseDetail courseDetail3 = new CourseDetail(course, studentsCourses3);
+    StudentsCoursesDetail studentsCoursesDetail3 = new StudentsCoursesDetail(studentsCourses3,
+        courseStatus3);
+    CourseDetail courseDetail3 = new CourseDetail(course, studentsCoursesDetail3);
     //リターンオブジェクトの作成
     List<CourseDetail> courseDetails = new ArrayList<>();
     courseDetails.add(courseDetail1);
@@ -234,8 +258,8 @@ class StudentConverterTest {
     return courseDetails;
   }
 
-  /*受講情報一覧*/
-  private static List<StudentsCourses> getSampleStudentsCourses() {
+  /*受講状態情報一覧*/
+  private static List<StudentsCoursesDetail> getSampleStudentsCoursesDetails() {
     //受講情報１
     StudentsCourses studentsCourses1 = StudentsCourses.builder()
         .id(1)
@@ -244,7 +268,6 @@ class StudentConverterTest {
         .startDate(Date.valueOf("2023-09-01"))
         .expectedCompletionDate(Date.valueOf("2024-09-01"))
         .build();
-
     //受講情報2
     StudentsCourses studentsCourses2 = StudentsCourses.builder()
         .id(2)
@@ -254,12 +277,24 @@ class StudentConverterTest {
         .expectedCompletionDate(Date.valueOf("2025-01-01"))
         .build();
 
-    //リターン用オブジェクトの作成
-    List<StudentsCourses> studentsCoursesList = new ArrayList<>();
-    studentsCoursesList.add(studentsCourses1);
-    studentsCoursesList.add(studentsCourses2);
+    //受講状態1
+    CourseStatus courseStatus1 = new CourseStatus(1, CourseStatusType.COMPLETED.getLabel());
+    //受講状態2
+    CourseStatus courseStatus2 = new CourseStatus(2, CourseStatusType.PROVISIONAL.getLabel());
 
-    return studentsCoursesList;
+    //受講コース情報１
+    StudentsCoursesDetail studentsCoursesDetail1 = new StudentsCoursesDetail(studentsCourses1,
+        courseStatus1);
+    //受講コース情報２
+    StudentsCoursesDetail studentsCoursesDetail2 = new StudentsCoursesDetail(studentsCourses2,
+        courseStatus2);
+
+    //リターン用オブジェクトの作成
+    List<StudentsCoursesDetail> studentsCoursesDetails = new ArrayList<>();
+    studentsCoursesDetails.add(studentsCoursesDetail1);
+    studentsCoursesDetails.add(studentsCoursesDetail2);
+
+    return studentsCoursesDetails;
   }
 
 }

@@ -19,13 +19,17 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import raisetech.StudentManagement.controller.converter.StudentConverter;
 import raisetech.StudentManagement.data.Course;
+import raisetech.StudentManagement.data.CourseStatus;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentsCourses;
-import raisetech.StudentManagement.domein.CourseDetail;
-import raisetech.StudentManagement.domein.StudentDetail;
+import raisetech.StudentManagement.domain.CourseDetail;
+import raisetech.StudentManagement.domain.StudentDetail;
+import raisetech.StudentManagement.domain.StudentsCoursesDetail;
+import raisetech.StudentManagement.domain.enums.CourseStatusType;
 import raisetech.StudentManagement.repository.StudentRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -56,12 +60,15 @@ class StudentServiceTest {
     List<Course> courses = new ArrayList<>();
     List<CourseDetail> courseDetails = new ArrayList<>();
     List<StudentsCourses> studentsCourses = new ArrayList<>();
-
+    List<CourseStatus> courseStatuses = new ArrayList<>();
+    List<StudentsCoursesDetail> studentsCoursesDetails = new ArrayList<>();
     //リポジトリのスタブ化
     when(repository.searchStudent()).thenReturn(students);
     when(repository.searchCourses()).thenReturn(courses);
     when(repository.searchStudentsCourses()).thenReturn(studentsCourses);
-
+    when(repository.searchCourseStatuses()).thenReturn(courseStatuses);
+    when(converter.createStudentsCoursesDetail(studentsCourses, courseStatuses)).thenReturn(
+        studentsCoursesDetails);
     //実行
     sut.searchStudentDetailList();
 
@@ -69,9 +76,10 @@ class StudentServiceTest {
     verify(repository, times(1)).searchStudent();
     verify(repository, times(1)).searchCourses();
     verify(repository, times(1)).searchStudentsCourses();
-    verify(converter, times(1)).createCourseDetails(studentsCourses, courses);
+    verify(repository, times(1)).searchCourseStatuses();
+    verify(converter, times(1)).createStudentsCoursesDetail(studentsCourses, courseStatuses);
+    verify(converter, times(1)).createCourseDetails(studentsCoursesDetails, courses);
     verify(converter, times(1)).createStudentDetails(students, courseDetails);
-
   }
 
   @Test
@@ -87,10 +95,14 @@ class StudentServiceTest {
     List<StudentsCourses> studentsCourses = new ArrayList<>();
     List<CourseDetail> courseDetails = new ArrayList<>();
     List<StudentDetail> studentDetails = new ArrayList<>();
+    List<CourseStatus> courseStatuses = new ArrayList<>();
+    List<StudentsCoursesDetail> studentsCoursesDetails = new ArrayList<>();
     when(repository.searchStudent()).thenReturn(students);
     when(repository.searchCourses()).thenReturn(courses);
     when(repository.searchStudentsCourses()).thenReturn(studentsCourses);
-    when(converter.createCourseDetails(studentsCourses, courses)).thenReturn(courseDetails);
+    when(converter.createStudentsCoursesDetail(studentsCourses, courseStatuses)).thenReturn(
+        studentsCoursesDetails);
+    when(converter.createCourseDetails(studentsCoursesDetails, courses)).thenReturn(courseDetails);
     when(converter.createStudentDetails(studentsCaptor.capture(), eq(courseDetails)))
         .thenReturn(studentDetails);
 
@@ -113,11 +125,15 @@ class StudentServiceTest {
     List<Course> courses = new ArrayList<>();
     List<StudentsCourses> studentsCourses = new ArrayList<>();
     List<CourseDetail> courseDetails = new ArrayList<>();
-
+    List<CourseStatus> courseStatuses = new ArrayList<>();
+    List<StudentsCoursesDetail> studentsCoursesDetails = new ArrayList<>();
     //リポジトリのスタブ化
     when(repository.searchStudentById(anyString())).thenReturn(student);
     when(repository.searchCourses()).thenReturn(courses);
     when(repository.searchStudentsCourses()).thenReturn(studentsCourses);
+    when(repository.searchCourseStatuses()).thenReturn(courseStatuses);
+    when(converter.createStudentsCoursesDetail(studentsCourses, courseStatuses)).thenReturn(
+        studentsCoursesDetails);
 
     //実行
     sut.searchStudentDetailById(anyString());
@@ -126,7 +142,9 @@ class StudentServiceTest {
     verify(repository, times(1)).searchStudentById(anyString());
     verify(repository, times(1)).searchCourses();
     verify(repository, times(1)).searchStudentsCourses();
-    verify(converter, times(1)).createCourseDetails(studentsCourses, courses);
+    verify(repository, times(1)).searchCourseStatuses();
+    verify(converter, times(1)).createStudentsCoursesDetail(studentsCourses, courseStatuses);
+    verify(converter, times(1)).createCourseDetails(studentsCoursesDetails, courses);
     verify(converter, times(1)).createStudentDetail(student, courseDetails);
 
   }
@@ -142,13 +160,17 @@ class StudentServiceTest {
     List<Course> courses = new ArrayList<>();
     List<StudentsCourses> studentsCourses = new ArrayList<>();
     List<CourseDetail> courseDetails = new ArrayList<>();
+    List<CourseStatus> courseStatuses = new ArrayList<>();
+    List<StudentsCoursesDetail> studentsCoursesDetails = new ArrayList<>();
 
     //リポジトリのスタブ化
     when(repository.searchFilterStudent(anyString(), anyString(), anyInt(), anyInt(), anyBoolean()))
         .thenReturn(students);
     when(repository.searchCourses()).thenReturn(courses);
     when(repository.searchFilterStudentsCourses(anyString())).thenReturn(studentsCourses);
-
+    when(repository.searchCourseStatuses()).thenReturn(courseStatuses);
+    when(converter.createStudentsCoursesDetail(studentsCourses, courseStatuses)).thenReturn(
+        studentsCoursesDetails);
     //実行
     sut.searchFilterStudentDetailList("山本", "ヤマモト", 0, 30, false, "00001");
 
@@ -157,7 +179,9 @@ class StudentServiceTest {
         .searchFilterStudent(anyString(), anyString(), anyInt(), anyInt(), anyBoolean());
     verify(repository, times(1)).searchCourses();
     verify(repository, times(1)).searchFilterStudentsCourses(anyString());
-    verify(converter, times(1)).createCourseDetails(studentsCourses, courses);
+    verify(repository, times(1)).searchCourseStatuses();
+    verify(converter, times(1)).createStudentsCoursesDetail(studentsCourses, courseStatuses);
+    verify(converter, times(1)).createCourseDetails(studentsCoursesDetails, courses);
     verify(converter, times(1)).createStudentDetails(students, courseDetails);
 
   }
@@ -215,12 +239,13 @@ class StudentServiceTest {
   /*
    *addStudentメソッドのテスト
    *1.リポジトリが想定回数呼び出されているか
-   *2.受講生ID,削除フラグ,開始日・終了日の各処理が想定通りの処理になっているか
+   *2.受講生ID,削除フラグ,開始日・終了日,受講状態テーブルにへ登録の各処理が想定通りの処理になっているか
    */
   @Test
   void 新規受講生の登録_リポジトリが想定回数呼び出されているか() {
     //オブジェクトの準備
     List<Student> studentList = new ArrayList<>();
+    List<StudentsCourses> studentsCoursesList = new ArrayList<>();
 
     //テストデータのセット
     StudentDetail studentDetail = getSampleNewStudentDetail();
@@ -235,11 +260,11 @@ class StudentServiceTest {
     verify(repository, times(1)).searchStudent();
     verify(repository, times(1)).insertStudent(any(Student.class));
     verify(repository, times(1)).insertStudentCourse(any(StudentsCourses.class));
-
+    verify(repository, times(1)).insertCourseStatus(any(CourseStatus.class));
   }
 
   @Test
-  void 新規受講生の登録_受講生IDと論理削除フラグのsetが想定通りの処理になっているか() {
+  void 新規受講生の登録_受講生IDと論理削除フラグと受講状態のsetが想定通りの処理になっているか() {
 
     //テストデータのセット
     //受講生1
@@ -250,9 +275,17 @@ class StudentServiceTest {
     ArgumentCaptor<Student> studentsCaptor = ArgumentCaptor.forClass(Student.class);
     ArgumentCaptor<StudentsCourses> studentCoursesCaptor = ArgumentCaptor.forClass(
         StudentsCourses.class);
-
+    ArgumentCaptor<CourseStatus> courseStatusCaptor = ArgumentCaptor.forClass(CourseStatus.class);
     //リポジトリのスタブ化
     when(repository.searchStudent()).thenReturn(studentList);
+    //studentsCoursesのモック化
+    StudentsCourses studentsCourses = Mockito.mock(StudentsCourses.class);
+    //自動採番されたidの取得を疑似的に実装
+    Mockito.doAnswer(invocationOnMock -> {
+      StudentsCourses arg = invocationOnMock.getArgument(0, StudentsCourses.class);
+      arg.setId(4);
+      return null;
+    }).when(repository).insertStudentCourse(any(studentsCourses.getClass()));
 
     //実行
     sut.addStudent(studentDetail);
@@ -261,9 +294,13 @@ class StudentServiceTest {
     verify(repository).insertStudent(studentsCaptor.capture());
     verify(repository)
         .insertStudentCourse(studentCoursesCaptor.capture());
+    verify(repository).insertCourseStatus(courseStatusCaptor.capture());
     assertEquals("4", studentsCaptor.getValue().getStudentId());
     assertEquals(false, studentsCaptor.getValue().isDeleted());
     assertEquals("4", studentCoursesCaptor.getValue().getStudentId());
+    assertEquals(4, courseStatusCaptor.getValue().getStudentsCoursesId());
+    assertEquals(CourseStatusType.PROVISIONAL.getLabel(),
+        courseStatusCaptor.getValue().getStatus());
   }
 
   /*
@@ -283,6 +320,7 @@ class StudentServiceTest {
     //検証
     verify(repository, times(1)).updateStudent(any(Student.class));
     verify(repository, times(1)).updateStudentCourses(any(StudentsCourses.class));
+    verify(repository, times(1)).updateCourseStatuses(any(CourseStatus.class));
   }
 
 
@@ -296,6 +334,7 @@ class StudentServiceTest {
     ArgumentCaptor<Student> studentCaptor = ArgumentCaptor.forClass(Student.class);
     ArgumentCaptor<StudentsCourses> studentsCoursesCaptor = ArgumentCaptor.forClass(
         StudentsCourses.class);
+    ArgumentCaptor<CourseStatus> courseStatusCaptor = ArgumentCaptor.forClass(CourseStatus.class);
 
     //実行
     sut.updateStudent(studentDetail);
@@ -317,6 +356,10 @@ class StudentServiceTest {
     assertEquals("1", studentsCoursesCaptor.getValue().getStudentId());
     assertEquals("00001", studentsCoursesCaptor.getValue().getCourseId());
 
+    verify(repository).updateCourseStatuses(courseStatusCaptor.capture());
+    assertEquals(1, courseStatusCaptor.getValue().getId());
+    assertEquals(1, courseStatusCaptor.getValue().getStudentsCoursesId());
+    assertEquals("受講中", courseStatusCaptor.getValue().getStatus());
   }
 
   /*
@@ -357,7 +400,7 @@ class StudentServiceTest {
   /*
    * テスト用データ
    * */
-  /*受講情報一覧*/
+  /*受講生一覧*/
   private static List<Student> getStudents() {
     //受講生1
     Student student1 = new Student(
@@ -400,14 +443,49 @@ class StudentServiceTest {
     );
 
     //リストに格納
-    List<Student> students1 = new ArrayList<>();
-    students1.add(student1);
-    students1.add(student2);
-    students1.add(student3);
+    List<Student> students = new ArrayList<>();
+    students.add(student1);
+    students.add(student2);
+    students.add(student3);
 
-    List<Student> students = students1;
     return students;
   }
+
+  /*受講情報一覧*/
+  private static List<StudentsCourses> getStudentsCourses() {
+    //受講情報1
+    StudentsCourses studentsCourses1 = StudentsCourses.builder()
+        .id(1)
+        .studentId("1")
+        .courseId("00001")
+        .startDate(Date.valueOf("2023-09-01"))
+        .expectedCompletionDate(Date.valueOf("2024-09-01"))
+        .build();
+    //受講情報2
+    StudentsCourses studentsCourses2 = StudentsCourses.builder()
+        .id(2)
+        .studentId("2")
+        .courseId("00002")
+        .startDate(Date.valueOf("2024-04-01"))
+        .expectedCompletionDate(Date.valueOf("2025-04-01"))
+        .build();
+    //受講情報3
+    StudentsCourses studentsCourses3 = StudentsCourses.builder()
+        .id(3)
+        .studentId("3")
+        .courseId("00001")
+        .startDate(Date.valueOf("2023-09-01"))
+        .expectedCompletionDate(Date.valueOf("2024-09-01"))
+        .build();
+    //リストに格納
+    List<StudentsCourses> studentsCoursesList = new ArrayList<>();
+    studentsCoursesList.add(studentsCourses1);
+    studentsCoursesList.add(studentsCourses2);
+    studentsCoursesList.add(studentsCourses3);
+    //リターン
+    return studentsCoursesList;
+  }
+
 
   /*受講生詳細情報*/
   private static StudentDetail getStudentDetail() {
@@ -437,8 +515,15 @@ class StudentServiceTest {
         .expectedCompletionDate(Date.valueOf("2024-09-01"))
         .build();
 
+    //受講状態
+    CourseStatus courseStatus = new CourseStatus(1, 1, "受講中");
+
+    //受講状態情報
+    StudentsCoursesDetail studentsCoursesDetail =
+        new StudentsCoursesDetail(studentsCourses, courseStatus);
+
     //リターンオブジェクトの作成
-    CourseDetail courseDetail = new CourseDetail(course, studentsCourses);
+    CourseDetail courseDetail = new CourseDetail(course, studentsCoursesDetail);
     List<CourseDetail> courseDetails = new ArrayList<>();
     courseDetails.add(courseDetail);
     StudentDetail studentDetail1 = new StudentDetail(student, courseDetails);
@@ -471,8 +556,13 @@ class StudentServiceTest {
     StudentsCourses studentsCourses = StudentsCourses.builder()
         .courseId("00001")
         .build();
+    //受講状態 ※受講状態のidは自動採番。受講情報のidと状態は登録処理で付与される想定
+    CourseStatus courseStatus = new CourseStatus();
+    //受講状態情報
+    StudentsCoursesDetail studentsCoursesDetail = new StudentsCoursesDetail(studentsCourses,
+        courseStatus);
     //受講コース情報
-    CourseDetail courseDetail = new CourseDetail(course, studentsCourses);
+    CourseDetail courseDetail = new CourseDetail(course, studentsCoursesDetail);
     //リストに格納
     List<CourseDetail> courseDetails = new ArrayList<>();
     courseDetails.add(courseDetail);
