@@ -1,7 +1,7 @@
 package raisetech.StudentManagement.controller.dto;
 
 import lombok.Getter;
-import raisetech.StudentManagement.domein.StudentDetail;
+import raisetech.StudentManagement.domain.StudentDetail;
 
 @Getter
 public class ResponseRegisterStudent {

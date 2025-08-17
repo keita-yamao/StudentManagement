@@ -22,10 +22,13 @@ import raisetech.StudentManagement.controller.dto.ResponseDeleteStudent;
 import raisetech.StudentManagement.controller.dto.ResponseRegisterStudent;
 import raisetech.StudentManagement.controller.dto.ResponseUpdateStudent;
 import raisetech.StudentManagement.data.Course;
+import raisetech.StudentManagement.data.CourseStatus;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentsCourses;
-import raisetech.StudentManagement.domein.CourseDetail;
-import raisetech.StudentManagement.domein.StudentDetail;
+import raisetech.StudentManagement.domain.CourseDetail;
+import raisetech.StudentManagement.domain.StudentDetail;
+import raisetech.StudentManagement.domain.StudentsCoursesDetail;
+import raisetech.StudentManagement.domain.enums.CourseStatusType;
 import raisetech.StudentManagement.service.StudentService;
 
 @WebMvcTest(StudentController.class)
@@ -243,6 +246,30 @@ class StudentControllerTest {
   }
 
   /*
+   *getCourseStatusTypesメソッドのテスト
+   */
+  @Test
+  void 受講状態の設定ステータス一覧検索_列挙型のcodeとlabelの値がjson形式で返ってきているか()
+      throws Exception {
+    //テスト用データ
+    String ExpectedJson = """
+        [
+             {"code": 1,"label": "仮申込"},
+             {"code": 2,"label": "本申込"},
+             {"code": 3,"label": "受講中"},
+             {"code": 4,"label": "修了"}
+         ]
+        """;
+
+    //検証
+    mockMvc.perform(MockMvcRequestBuilders.get("/courseStatusList"))
+        .andDo(MockMvcResultHandlers.print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.content()
+            .json(ExpectedJson));
+  }
+
+  /*
    * throwExceptionメソッドのテスト
    */
   @Test
@@ -284,8 +311,13 @@ class StudentControllerTest {
         .expectedCompletionDate(Date.valueOf("2024-09-01"))
         .build();
 
+    //受講状態
+    CourseStatus courseStatus = new CourseStatus(1, CourseStatusType.COMPLETED.getLabel());
+
     //リターンオブジェクトの作成
-    CourseDetail courseDetail = new CourseDetail(course, studentsCourses);
+    StudentsCoursesDetail studentsCoursesDetail = new StudentsCoursesDetail(studentsCourses,
+        courseStatus);
+    CourseDetail courseDetail = new CourseDetail(course, studentsCoursesDetail);
     List<CourseDetail> courseDetails = new ArrayList<>();
     courseDetails.add(courseDetail);
     StudentDetail studentDetail = new StudentDetail(student, courseDetails);
@@ -344,14 +376,23 @@ class StudentControllerTest {
         .expectedCompletionDate(Date.valueOf("2025-01-01"))
         .build();
 
+    //受講状態1
+    CourseStatus courseStatus1 = new CourseStatus(1, CourseStatusType.COMPLETED.getLabel());
+    //受講状態2
+    CourseStatus courseStatus2 = new CourseStatus(2, CourseStatusType.PROVISIONAL.getLabel());
+
     //リターンオブジェクトの作成
     //受講生１
-    CourseDetail courseDetail1 = new CourseDetail(course, studentsCourses1);
+    StudentsCoursesDetail studentsCoursesDetail1 = new StudentsCoursesDetail(studentsCourses1,
+        courseStatus1);
+    CourseDetail courseDetail1 = new CourseDetail(course, studentsCoursesDetail1);
     List<CourseDetail> courseDetails1 = new ArrayList<>();
     courseDetails1.add(courseDetail1);
     StudentDetail studentDetail1 = new StudentDetail(student1, courseDetails1);
     //受講生2
-    CourseDetail courseDetail2 = new CourseDetail(course, studentsCourses2);
+    StudentsCoursesDetail studentsCoursesDetail2 = new StudentsCoursesDetail(studentsCourses2,
+        courseStatus2);
+    CourseDetail courseDetail2 = new CourseDetail(course, studentsCoursesDetail2);
     List<CourseDetail> courseDetails2 = new ArrayList<>();
     courseDetails2.add(courseDetail2);
     StudentDetail studentDetail2 = new StudentDetail(student2, courseDetails2);

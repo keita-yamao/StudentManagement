@@ -23,3 +23,12 @@ VALUES
 ('00003','VBAコース'),
 ('00004','デザインコース'),
 ('00005','Web制作コース');
+
+INSERT INTO course_statuses (students_courses_id,status)
+VALUES
+(1,'修了'),
+(2,'仮申込'),
+(3,'本申込'),
+(4,'受講中'),
+(5,'修了'),
+(6,'仮申込');

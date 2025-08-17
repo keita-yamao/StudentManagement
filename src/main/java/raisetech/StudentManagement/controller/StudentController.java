@@ -21,7 +21,8 @@ import raisetech.StudentManagement.controller.dto.ResponseRegisterStudent;
 import raisetech.StudentManagement.controller.dto.ResponseUpdateStudent;
 import raisetech.StudentManagement.data.Course;
 import raisetech.StudentManagement.data.Student;
-import raisetech.StudentManagement.domein.StudentDetail;
+import raisetech.StudentManagement.domain.StudentDetail;
+import raisetech.StudentManagement.domain.enums.CourseStatusType;
 import raisetech.StudentManagement.exception.TestException;
 import raisetech.StudentManagement.service.StudentService;
 
@@ -121,10 +122,10 @@ public class StudentController {
   /**
    * 受講生情報の更新処理
    *
-   * @param studentDetail 更新する受講生情報の入ったオブジェクト
+   * @param studentDetail 更新する受講生詳細情報の入ったオブジェクト
    * @return 更新処理が完了したメッセージの文字列
    */
-  @Operation(summary = "新規登録", description = "受講生の新規登録処理を行います。")
+  @Operation(summary = "更新処理", description = "受講生詳細情報の更新処理を行います。")
   @PostMapping("/updateStudent")
   public ResponseEntity<ResponseUpdateStudent> updateStudent(
       @RequestBody @Valid StudentDetail studentDetail) {
@@ -152,6 +153,16 @@ public class StudentController {
     //DTOオブジェクトに削除処理情報を格納
     ResponseDeleteStudent responseDeleteStudent = new ResponseDeleteStudent(student);
     return ResponseEntity.ok(responseDeleteStudent);
+  }
+
+  /**
+   * 受講状態の設定ステータス一覧の検索
+   *
+   * @return 受講状態のステータス一覧を返す
+   */
+  @GetMapping("/courseStatusList")
+  public CourseStatusType[] getCourseStatusTypes() {
+    return CourseStatusType.values();
   }
 
   /**
