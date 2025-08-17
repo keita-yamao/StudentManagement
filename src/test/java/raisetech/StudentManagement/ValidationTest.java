@@ -21,8 +21,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import raisetech.StudentManagement.controller.StudentController;
+import raisetech.StudentManagement.data.RegisterGroup;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentsCourses;
+import raisetech.StudentManagement.data.UpdateGroup;
 import raisetech.StudentManagement.service.StudentService;
 
 @WebMvcTest(StudentController.class)
@@ -218,13 +220,26 @@ class ValidationTest {
    *Studentクラスのバリデーションテスト
    */
   @Test
-  public void Studnet_受講生IDが10文字以上() {
+  public void Studnet_新規登録時受講生IDが10文字以上() {
     //DTOにデータを格納
     Student student = getStudent();
     student.setStudentId("12345678910");
 
     //バリエーションチェックの結果を取得
-    Set<ConstraintViolation<Student>> violations = validator.validate(student);
+    Set<ConstraintViolation<Student>> violations = validator.validate(student, RegisterGroup.class);
+
+    //検証
+    assertThat(violations.size()).isEqualTo(0);
+  }
+
+  @Test
+  public void Studnet_更新時受講生IDが10文字以上() {
+    //DTOにデータを格納
+    Student student = getStudent();
+    student.setStudentId("12345678910");
+
+    //バリエーションチェックの結果を取得
+    Set<ConstraintViolation<Student>> violations = validator.validate(student, UpdateGroup.class);
 
     //検証
     assertThat(violations.size()).isEqualTo(1);
@@ -232,13 +247,26 @@ class ValidationTest {
   }
 
   @Test
-  public void Student_受講生ID入力されていない() {
+  public void Student_新規登録時受講生ID入力されていない() {
     //DTOにデータを格納
     Student student = getStudent();
     student.setStudentId("");
 
     //バリエーションチェックの結果を取得
-    Set<ConstraintViolation<Student>> violations = validator.validate(student);
+    Set<ConstraintViolation<Student>> violations = validator.validate(student, RegisterGroup.class);
+
+    //検証
+    assertThat(violations.size()).isEqualTo(0);
+  }
+
+  @Test
+  public void Student_更新時受講生ID入力されていない() {
+    //DTOにデータを格納
+    Student student = getStudent();
+    student.setStudentId("");
+
+    //バリエーションチェックの結果を取得
+    Set<ConstraintViolation<Student>> violations = validator.validate(student, UpdateGroup.class);
 
     //検証
     assertThat(violations.size()).isEqualTo(1);
@@ -246,14 +274,29 @@ class ValidationTest {
   }
 
   @Test
-  public void Studnet_受講生IDにスペースが含まれている() {
+  public void Studnet_新規登録時受講生IDにスペースが含まれている() {
     //DTOにデータを格納
     //受講生情報
     Student student = getStudent();
     student.setStudentId("12 45");
 
     //バリエーションチェックの結果を取得
-    Set<ConstraintViolation<Student>> violations = validator.validate(student);
+    Set<ConstraintViolation<Student>> violations = validator.validate(student, RegisterGroup.class);
+
+    //検証
+    assertThat(violations.size()).isEqualTo(0);
+  }
+
+
+  @Test
+  public void Studnet_更新処理時受講生IDにスペースが含まれている() {
+    //DTOにデータを格納
+    //受講生情報
+    Student student = getStudent();
+    student.setStudentId("12 45");
+
+    //バリエーションチェックの結果を取得
+    Set<ConstraintViolation<Student>> violations = validator.validate(student, UpdateGroup.class);
 
     //検証
     assertThat(violations.size()).isEqualTo(1);
@@ -262,13 +305,13 @@ class ValidationTest {
   }
 
   @Test
-  public void Student_名前が60文字以上() {
+  public void Student_新規登録時名前が60文字以上() {
     //DTOにデータを格納
     Student student = getStudent();
     student.setName("あいうえお".repeat(13));
 
     //バリエーションチェックの結果を取得
-    Set<ConstraintViolation<Student>> violations = validator.validate(student);
+    Set<ConstraintViolation<Student>> violations = validator.validate(student, RegisterGroup.class);
 
     //検証
     assertThat(violations.size()).isEqualTo(1);
@@ -277,13 +320,28 @@ class ValidationTest {
   }
 
   @Test
-  public void Studnet_名前が未入力() {
+  public void Student_更新処理時名前が60文字以上() {
+    //DTOにデータを格納
+    Student student = getStudent();
+    student.setName("あいうえお".repeat(13));
+
+    //バリエーションチェックの結果を取得
+    Set<ConstraintViolation<Student>> violations = validator.validate(student, UpdateGroup.class);
+
+    //検証
+    assertThat(violations.size()).isEqualTo(1);
+    assertThat(violations).extracting("message")
+        .containsOnly("名前は60文字までです");
+  }
+
+  @Test
+  public void Studnet_新規登録時名前が未入力() {
     //DTOにデータを格納
     Student student = getStudent();
     student.setName("");
 
     //バリエーションチェックの結果を取得
-    Set<ConstraintViolation<Student>> violations = validator.validate(student);
+    Set<ConstraintViolation<Student>> violations = validator.validate(student, RegisterGroup.class);
 
     //検証
     assertThat(violations.size()).isEqualTo(1);
@@ -292,13 +350,28 @@ class ValidationTest {
   }
 
   @Test
-  public void Student_フリガナが60文字以上() {
+  public void Studnet_更新処理時名前が未入力() {
+    //DTOにデータを格納
+    Student student = getStudent();
+    student.setName("");
+
+    //バリエーションチェックの結果を取得
+    Set<ConstraintViolation<Student>> violations = validator.validate(student, UpdateGroup.class);
+
+    //検証
+    assertThat(violations.size()).isEqualTo(1);
+    assertThat(violations).extracting("message")
+        .containsOnly("名前が入力されていません");
+  }
+
+  @Test
+  public void Student_新規登録時フリガナが60文字以上() {
     //DTOにデータを格納
     Student student = getStudent();
     student.setFurigana("アイウエオ".repeat(13));
 
     //バリエーションチェックの結果を取得
-    Set<ConstraintViolation<Student>> violations = validator.validate(student);
+    Set<ConstraintViolation<Student>> violations = validator.validate(student, RegisterGroup.class);
 
     //検証
     assertThat(violations.size()).isEqualTo(1);
@@ -307,13 +380,28 @@ class ValidationTest {
   }
 
   @Test
-  public void Student_フリガナが未入力() {
+  public void Student_更新処理時フリガナが60文字以上() {
+    //DTOにデータを格納
+    Student student = getStudent();
+    student.setFurigana("アイウエオ".repeat(13));
+
+    //バリエーションチェックの結果を取得
+    Set<ConstraintViolation<Student>> violations = validator.validate(student, UpdateGroup.class);
+
+    //検証
+    assertThat(violations.size()).isEqualTo(1);
+    assertThat(violations).extracting("message")
+        .containsOnly("フリガナは60文字までです");
+  }
+
+  @Test
+  public void Student_新規登録時フリガナが未入力() {
     //DTOにデータを格納
     Student student = getStudent();
     student.setFurigana("");
 
     //バリエーションチェックの結果を取得
-    Set<ConstraintViolation<Student>> violations = validator.validate(student);
+    Set<ConstraintViolation<Student>> violations = validator.validate(student, RegisterGroup.class);
 
     //検証
     assertThat(violations.size()).isEqualTo(1);
@@ -322,13 +410,28 @@ class ValidationTest {
   }
 
   @Test
-  public void Student_ニックネームが60文字以上() {
+  public void Student_更新処理時フリガナが未入力() {
+    //DTOにデータを格納
+    Student student = getStudent();
+    student.setFurigana("");
+
+    //バリエーションチェックの結果を取得
+    Set<ConstraintViolation<Student>> violations = validator.validate(student, UpdateGroup.class);
+
+    //検証
+    assertThat(violations.size()).isEqualTo(1);
+    assertThat(violations).extracting("message")
+        .containsOnly("フリガナが入力されていません");
+  }
+
+  @Test
+  public void Student_新規登録時ニックネームが60文字以上() {
     //DTOにデータを格納
     Student student = getStudent();
     student.setNickname("アイウエオ".repeat(13));
 
     //バリエーションチェックの結果を取得
-    Set<ConstraintViolation<Student>> violations = validator.validate(student);
+    Set<ConstraintViolation<Student>> violations = validator.validate(student, RegisterGroup.class);
 
     //検証
     assertThat(violations.size()).isEqualTo(1);
@@ -337,13 +440,29 @@ class ValidationTest {
   }
 
   @Test
-  public void Student_ニックネームが未入力() {
+  public void Student_更新処理時ニックネームが60文字以上() {
+    //DTOにデータを格納
+    Student student = getStudent();
+    student.setNickname("アイウエオ".repeat(13));
+
+    //バリエーションチェックの結果を取得
+    Set<ConstraintViolation<Student>> violations = validator.validate(student, UpdateGroup.class);
+
+    //検証
+    assertThat(violations.size()).isEqualTo(1);
+    assertThat(violations).extracting("message")
+        .containsOnly("ニックネームは60文字までです");
+  }
+
+
+  @Test
+  public void Student_新規登録時ニックネームが未入力() {
     //DTOにデータを格納
     Student student = getStudent();
     student.setNickname("");
 
     //バリエーションチェックの結果を取得
-    Set<ConstraintViolation<Student>> violations = validator.validate(student);
+    Set<ConstraintViolation<Student>> violations = validator.validate(student, RegisterGroup.class);
 
     //検証
     assertThat(violations.size()).isEqualTo(1);
@@ -352,13 +471,28 @@ class ValidationTest {
   }
 
   @Test
-  public void Student_無効な形式のメールアドレス() {
+  public void Student_更新処理時ニックネームが未入力() {
+    //DTOにデータを格納
+    Student student = getStudent();
+    student.setNickname("");
+
+    //バリエーションチェックの結果を取得
+    Set<ConstraintViolation<Student>> violations = validator.validate(student, UpdateGroup.class);
+
+    //検証
+    assertThat(violations.size()).isEqualTo(1);
+    assertThat(violations).extracting("message")
+        .containsOnly("ニックネームが入力されていません");
+  }
+
+  @Test
+  public void Student_新規登録時無効な形式のメールアドレス() {
     //DTOにデータを格納
     Student student = getStudent();
     student.setEmail("無効なメールアドレス");
 
     //バリエーションチェックの結果を取得
-    Set<ConstraintViolation<Student>> violations = validator.validate(student);
+    Set<ConstraintViolation<Student>> violations = validator.validate(student, RegisterGroup.class);
 
     //検証
     assertThat(violations.size()).isEqualTo(1);
@@ -367,13 +501,28 @@ class ValidationTest {
   }
 
   @Test
-  public void Student_メールアドレスが未入力() {
+  public void Student_更新処理時無効な形式のメールアドレス() {
+    //DTOにデータを格納
+    Student student = getStudent();
+    student.setEmail("無効なメールアドレス");
+
+    //バリエーションチェックの結果を取得
+    Set<ConstraintViolation<Student>> violations = validator.validate(student, UpdateGroup.class);
+
+    //検証
+    assertThat(violations.size()).isEqualTo(1);
+    assertThat(violations).extracting("message")
+        .containsOnly("無効な形式のメールアドレスです");
+  }
+
+  @Test
+  public void Student_新規登録時メールアドレスが未入力() {
     //DTOにデータを格納
     Student student = getStudent();
     student.setEmail(null);
 
     //バリエーションチェックの結果を取得
-    Set<ConstraintViolation<Student>> violations = validator.validate(student);
+    Set<ConstraintViolation<Student>> violations = validator.validate(student, RegisterGroup.class);
 
     //検証
     assertThat(violations.size()).isEqualTo(1);
@@ -382,13 +531,28 @@ class ValidationTest {
   }
 
   @Test
-  public void Student_住所が161文字以上() {
+  public void Student_更新処理時メールアドレスが未入力() {
+    //DTOにデータを格納
+    Student student = getStudent();
+    student.setEmail(null);
+
+    //バリエーションチェックの結果を取得
+    Set<ConstraintViolation<Student>> violations = validator.validate(student, UpdateGroup.class);
+
+    //検証
+    assertThat(violations.size()).isEqualTo(1);
+    assertThat(violations).extracting("message")
+        .containsOnly("メールアドレスが入力されていません");
+  }
+
+  @Test
+  public void Student_新規登録時住所が161文字以上() {
     //DTOにデータを格納
     Student student = getStudent();
     student.setAddress("0123456789".repeat(17));
 
     //バリエーションチェックの結果を取得
-    Set<ConstraintViolation<Student>> violations = validator.validate(student);
+    Set<ConstraintViolation<Student>> violations = validator.validate(student, RegisterGroup.class);
 
     //検証
     assertThat(violations.size()).isEqualTo(1);
@@ -397,13 +561,28 @@ class ValidationTest {
   }
 
   @Test
-  public void Student_年齢の最小値が0以下() {
+  public void Student_更新処理時住所が161文字以上() {
+    //DTOにデータを格納
+    Student student = getStudent();
+    student.setAddress("0123456789".repeat(17));
+
+    //バリエーションチェックの結果を取得
+    Set<ConstraintViolation<Student>> violations = validator.validate(student, UpdateGroup.class);
+
+    //検証
+    assertThat(violations.size()).isEqualTo(1);
+    assertThat(violations).extracting("message")
+        .containsOnly("住所は161文字までです");
+  }
+
+  @Test
+  public void Student_新規登録時年齢の最小値が0以下() {
     //DTOにデータを格納
     Student student = getStudent();
     student.setAge(-1);
 
     //バリエーションチェックの結果を取得
-    Set<ConstraintViolation<Student>> violations = validator.validate(student);
+    Set<ConstraintViolation<Student>> violations = validator.validate(student, RegisterGroup.class);
 
     //検証
     assertThat(violations.size()).isEqualTo(1);
@@ -412,13 +591,28 @@ class ValidationTest {
   }
 
   @Test
-  public void Student_年齢の最大値が120以上() {
+  public void Student_更新処理時年齢の最小値が0以下() {
+    //DTOにデータを格納
+    Student student = getStudent();
+    student.setAge(-1);
+
+    //バリエーションチェックの結果を取得
+    Set<ConstraintViolation<Student>> violations = validator.validate(student, UpdateGroup.class);
+
+    //検証
+    assertThat(violations.size()).isEqualTo(1);
+    assertThat(violations).extracting("message")
+        .containsOnly("最少年齢は0才からです");
+  }
+
+  @Test
+  public void Student_新規登録時年齢の最大値が120以上() {
     //DTOにデータを格納
     Student student = getStudent();
     student.setAge(121);
 
     //バリエーションチェックの結果を取得
-    Set<ConstraintViolation<Student>> violations = validator.validate(student);
+    Set<ConstraintViolation<Student>> violations = validator.validate(student, RegisterGroup.class);
 
     //検証
     assertThat(violations.size()).isEqualTo(1);
@@ -427,13 +621,28 @@ class ValidationTest {
   }
 
   @Test
-  public void Student_性別が20文字以上() {
+  public void Student_更新処理時年齢の最大値が120以上() {
+    //DTOにデータを格納
+    Student student = getStudent();
+    student.setAge(121);
+
+    //バリエーションチェックの結果を取得
+    Set<ConstraintViolation<Student>> violations = validator.validate(student, UpdateGroup.class);
+
+    //検証
+    assertThat(violations.size()).isEqualTo(1);
+    assertThat(violations).extracting("message")
+        .containsOnly("最大年齢は120才までです");
+  }
+
+  @Test
+  public void Student_新規登録時性別が20文字以上() {
     //DTOにデータを格納
     Student student = getStudent();
     student.setGender("あいうえお".repeat(5));
 
     //バリエーションチェックの結果を取得
-    Set<ConstraintViolation<Student>> violations = validator.validate(student);
+    Set<ConstraintViolation<Student>> violations = validator.validate(student, RegisterGroup.class);
 
     //検証
     assertThat(violations.size()).isEqualTo(1);
@@ -442,13 +651,28 @@ class ValidationTest {
   }
 
   @Test
-  public void Student_備考が255文字以上() {
+  public void Student_更新処理時性別が20文字以上() {
+    //DTOにデータを格納
+    Student student = getStudent();
+    student.setGender("あいうえお".repeat(5));
+
+    //バリエーションチェックの結果を取得
+    Set<ConstraintViolation<Student>> violations = validator.validate(student, UpdateGroup.class);
+
+    //検証
+    assertThat(violations.size()).isEqualTo(1);
+    assertThat(violations).extracting("message")
+        .containsOnly("20文字までです");
+  }
+
+  @Test
+  public void Student_新規登録時備考が255文字以上() {
     //DTOにデータを格納
     Student student = getStudent();
     student.setRemark("あいうえお".repeat(52));
 
     //バリエーションチェックの結果を取得
-    Set<ConstraintViolation<Student>> violations = validator.validate(student);
+    Set<ConstraintViolation<Student>> violations = validator.validate(student, RegisterGroup.class);
 
     //検証
     assertThat(violations.size()).isEqualTo(1);
@@ -456,22 +680,67 @@ class ValidationTest {
         .containsOnly("最大文字数255文字まで");
   }
 
+  @Test
+  public void Student_更新処理時備考が255文字以上() {
+    //DTOにデータを格納
+    Student student = getStudent();
+    student.setRemark("あいうえお".repeat(52));
+
+    //バリエーションチェックの結果を取得
+    Set<ConstraintViolation<Student>> violations = validator.validate(student, UpdateGroup.class);
+
+    //検証
+    assertThat(violations.size()).isEqualTo(1);
+    assertThat(violations).extracting("message")
+        .containsOnly("最大文字数255文字まで");
+  }
+
+
   /*
    *StudentsCoursesクラスのバリデーションテスト
    */
   @Test
-  public void StudentsCourses_受講生IDが10桁以上() {
+  public void StudentsCourses_新規登録時受講生IDが10桁以上() {
     //DTOにデータを格納
     StudentsCourses studentsCourses = getSampleStudentsCourse();
     studentsCourses.setStudentId("12345".repeat(3));
 
     //バリエーションチェックの結果を取得
-    Set<ConstraintViolation<StudentsCourses>> violations = validator.validate(studentsCourses);
+    Set<ConstraintViolation<StudentsCourses>> violations = validator.validate(studentsCourses,
+        RegisterGroup.class);
+
+    //検証
+    assertThat(violations.size()).isEqualTo(0);
+  }
+
+  @Test
+  public void StudentsCourses_更新処理時受講生IDが10桁以上() {
+    //DTOにデータを格納
+    StudentsCourses studentsCourses = getSampleStudentsCourse();
+    studentsCourses.setStudentId("12345".repeat(3));
+
+    //バリエーションチェックの結果を取得
+    Set<ConstraintViolation<StudentsCourses>> violations = validator.validate(studentsCourses,
+        UpdateGroup.class);
 
     //検証
     assertThat(violations.size()).isEqualTo(1);
     assertThat(violations).extracting("message")
         .containsOnly("受講生IDは10桁までです");
+  }
+
+  @Test
+  public void StudentCourses_新規登録時受講生IDが未入力() {
+    //DTOにデータを格納
+    StudentsCourses studentsCourses = getSampleStudentsCourse();
+    studentsCourses.setStudentId("");
+
+    //バリエーションチェックの結果を取得
+    Set<ConstraintViolation<StudentsCourses>> violations = validator.validate(studentsCourses,
+        RegisterGroup.class);
+
+    //検証
+    assertThat(violations.size()).isEqualTo(0);
   }
 
   @Test
@@ -481,7 +750,8 @@ class ValidationTest {
     studentsCourses.setStudentId("");
 
     //バリエーションチェックの結果を取得
-    Set<ConstraintViolation<StudentsCourses>> violations = validator.validate(studentsCourses);
+    Set<ConstraintViolation<StudentsCourses>> violations = validator.validate(studentsCourses,
+        UpdateGroup.class);
 
     //検証
     assertThat(violations.size()).isEqualTo(1);
@@ -490,13 +760,28 @@ class ValidationTest {
   }
 
   @Test
-  public void StudentCourses_受講生IDにスペースが含まれている() {
+  public void StudentCourses_新規登録時受講生IDにスペースが含まれている() {
     //DTOにデータを格納
     StudentsCourses studentsCourses = getSampleStudentsCourse();
     studentsCourses.setStudentId("12 34");
 
     //バリエーションチェックの結果を取得
-    Set<ConstraintViolation<StudentsCourses>> violations = validator.validate(studentsCourses);
+    Set<ConstraintViolation<StudentsCourses>> violations = validator.validate(studentsCourses,
+        RegisterGroup.class);
+
+    //検証
+    assertThat(violations.size()).isEqualTo(0);
+  }
+
+  @Test
+  public void StudentCourses_更新処理時受講生IDにスペースが含まれている() {
+    //DTOにデータを格納
+    StudentsCourses studentsCourses = getSampleStudentsCourse();
+    studentsCourses.setStudentId("12 34");
+
+    //バリエーションチェックの結果を取得
+    Set<ConstraintViolation<StudentsCourses>> violations = validator.validate(studentsCourses,
+        UpdateGroup.class);
 
     //検証
     assertThat(violations.size()).isEqualTo(1);
@@ -505,13 +790,14 @@ class ValidationTest {
   }
 
   @Test
-  public void StudentCourses_コースIDが未入力の場合() {
+  public void StudentCourses_新規登録時コースIDが未入力の場合() {
     //DTOにデータを格納
     StudentsCourses studentsCourses = getSampleStudentsCourse();
     studentsCourses.setCourseId("");
 
     //バリエーションチェックの結果を取得
-    Set<ConstraintViolation<StudentsCourses>> violations = validator.validate(studentsCourses);
+    Set<ConstraintViolation<StudentsCourses>> violations = validator.validate(studentsCourses,
+        RegisterGroup.class);
 
     //検証
     assertThat(violations.size()).isEqualTo(2);
@@ -520,13 +806,30 @@ class ValidationTest {
   }
 
   @Test
-  public void StudentsCourses_コースIDにスペースが含まれている() {
+  public void StudentCourses_更新処理時コースIDが未入力の場合() {
+    //DTOにデータを格納
+    StudentsCourses studentsCourses = getSampleStudentsCourse();
+    studentsCourses.setCourseId("");
+
+    //バリエーションチェックの結果を取得
+    Set<ConstraintViolation<StudentsCourses>> violations = validator.validate(studentsCourses,
+        UpdateGroup.class);
+
+    //検証
+    assertThat(violations.size()).isEqualTo(2);
+    assertThat(violations).extracting("message")
+        .containsOnly("コースIDは5文字で入力してください", "コースIDが入力されていません");
+  }
+
+  @Test
+  public void StudentsCourses_新規登録時コースIDにスペースが含まれている() {
     //DTOにデータを格納
     StudentsCourses studentsCourses = getSampleStudentsCourse();
     studentsCourses.setCourseId("12 34");
 
     //バリエーションチェックの結果を取得
-    Set<ConstraintViolation<StudentsCourses>> violations = validator.validate(studentsCourses);
+    Set<ConstraintViolation<StudentsCourses>> violations = validator.validate(studentsCourses,
+        RegisterGroup.class);
 
     //検証
     assertThat(violations.size()).isEqualTo(1);
@@ -535,13 +838,44 @@ class ValidationTest {
   }
 
   @Test
-  public void StudentsCourses_開始日付がnull() {
+  public void StudentsCourses_更新処理時コースIDにスペースが含まれている() {
+    //DTOにデータを格納
+    StudentsCourses studentsCourses = getSampleStudentsCourse();
+    studentsCourses.setCourseId("12 34");
+
+    //バリエーションチェックの結果を取得
+    Set<ConstraintViolation<StudentsCourses>> violations = validator.validate(studentsCourses,
+        UpdateGroup.class);
+
+    //検証
+    assertThat(violations.size()).isEqualTo(1);
+    assertThat(violations).extracting("message")
+        .containsOnly("半角スペースと全角スペースは使用できません");
+  }
+
+  @Test
+  public void StudentsCourses_新規登録時開始日付がnull() {
     //DTOにデータを格納
     StudentsCourses studentsCourses = getSampleStudentsCourse();
     studentsCourses.setStartDate(null);
 
     //バリエーションチェックの結果を取得
-    Set<ConstraintViolation<StudentsCourses>> violations = validator.validate(studentsCourses);
+    Set<ConstraintViolation<StudentsCourses>> violations = validator.validate(studentsCourses,
+        RegisterGroup.class);
+
+    //検証
+    assertThat(violations.size()).isEqualTo(0);
+  }
+
+  @Test
+  public void StudentsCourses_更新処理時開始日付がnull() {
+    //DTOにデータを格納
+    StudentsCourses studentsCourses = getSampleStudentsCourse();
+    studentsCourses.setStartDate(null);
+
+    //バリエーションチェックの結果を取得
+    Set<ConstraintViolation<StudentsCourses>> violations = validator.validate(studentsCourses,
+        UpdateGroup.class);
 
     //検証
     assertThat(violations.size()).isEqualTo(1);
@@ -550,13 +884,28 @@ class ValidationTest {
   }
 
   @Test
-  public void StudentsCourses_修了日付がnull() {
+  public void StudentsCourses_新規登録時修了日付がnull() {
     //DTOにデータを格納
     StudentsCourses studentsCourses = getSampleStudentsCourse();
     studentsCourses.setExpectedCompletionDate(null);
 
     //バリエーションチェックの結果を取得
-    Set<ConstraintViolation<StudentsCourses>> violations = validator.validate(studentsCourses);
+    Set<ConstraintViolation<StudentsCourses>> violations = validator.validate(studentsCourses,
+        RegisterGroup.class);
+
+    //検証
+    assertThat(violations.size()).isEqualTo(0);
+  }
+
+  @Test
+  public void StudentsCourses_更新処理時修了日付がnull() {
+    //DTOにデータを格納
+    StudentsCourses studentsCourses = getSampleStudentsCourse();
+    studentsCourses.setExpectedCompletionDate(null);
+
+    //バリエーションチェックの結果を取得
+    Set<ConstraintViolation<StudentsCourses>> violations = validator.validate(studentsCourses,
+        UpdateGroup.class);
 
     //検証
     assertThat(violations.size()).isEqualTo(1);
