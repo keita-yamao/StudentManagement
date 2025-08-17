@@ -17,22 +17,25 @@ public class StudentsCourses {
   private int id;
 
   @Schema(description = "受講生ID", type = "String", example = "1")
-  @Size(max = 10, message = "受講生IDは10桁までです")
-  @NotEmpty(message = "受講生IDが入力されていません")
-  @Pattern(regexp = "^(?!.*[ \u0020\u3000]).*$", message = "半角スペースと全角スペースは使用できません")
+  @Size(max = 10, message = "受講生IDは10桁までです", groups = UpdateGroup.class)
+  @NotEmpty(message = "受講生IDが入力されていません", groups = UpdateGroup.class)
+  @Pattern(regexp = "^(?!.*[ \u0020\u3000]).*$", message = "半角スペースと全角スペースは使用できません", groups = UpdateGroup.class)
   private String studentId;
 
   @Schema(description = "コースID", type = "String", example = "0001")
-  @Size(min = 5, max = 5, message = "コースIDは5文字で入力してください")
-  @NotEmpty(message = "コースIDが入力されていません")
-  @Pattern(regexp = "^(?!.*[ \u0020\u3000]).*$", message = "半角スペースと全角スペースは使用できません")
+  @Size(min = 5, max = 5, message = "コースIDは5文字で入力してください", groups = {
+      RegisterGroup.class, UpdateGroup.class})
+  @NotEmpty(message = "コースIDが入力されていません", groups = {RegisterGroup.class,
+      UpdateGroup.class})
+  @Pattern(regexp = "^(?!.*[ \u0020\u3000]).*$", message = "半角スペースと全角スペースは使用できません", groups = {
+      RegisterGroup.class, UpdateGroup.class})
   private String courseId;
 
   @Schema(description = "受講開始日", type = "Date", example = "2023-09-01")
-  @NotNull(message = "開始日付が未入力です")
+  @NotNull(message = "開始日付が未入力です", groups = UpdateGroup.class)
   private Date startDate;
 
   @Schema(description = "修了日", type = "Date", example = "2024-09-01")
-  @NotNull(message = "修了日付が未入力です")
+  @NotNull(message = "修了日付が未入力です", groups = UpdateGroup.class)
   private Date expectedCompletionDate;
 }
