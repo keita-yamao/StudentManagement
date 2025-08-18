@@ -1,4 +1,4 @@
-package raisetech.StudentManagement.domein;
+package raisetech.StudentManagement.domain;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;

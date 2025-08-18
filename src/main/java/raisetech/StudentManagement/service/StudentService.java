@@ -9,10 +9,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import raisetech.StudentManagement.controller.converter.StudentConverter;
 import raisetech.StudentManagement.data.Course;
+import raisetech.StudentManagement.data.CourseStatus;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentsCourses;
-import raisetech.StudentManagement.domein.CourseDetail;
-import raisetech.StudentManagement.domein.StudentDetail;
+import raisetech.StudentManagement.domain.CourseDetail;
+import raisetech.StudentManagement.domain.StudentDetail;
+import raisetech.StudentManagement.domain.StudentsCoursesDetail;
+import raisetech.StudentManagement.domain.enums.CourseStatusType;
 import raisetech.StudentManagement.repository.StudentRepository;
 
 /**
@@ -45,12 +48,17 @@ public class StudentService {
     List<Student> students = repository.searchStudent();
     List<Course> courses = repository.searchCourses();
     List<StudentsCourses> studentsCourses = repository.searchStudentsCourses();
+    List<CourseStatus> courseStatuses = repository.searchCourseStatuses();
     //削除フラグの立った生徒情報を省く
     students = students.stream()
         .filter(student -> !student.isDeleted())
         .collect(Collectors.toList());
+    //受講情報一覧と受講状態一覧のコンバート処理
+    List<StudentsCoursesDetail> studentsCoursesDetails = converter.createStudentsCoursesDetail(
+        studentsCourses, courseStatuses);
     //受講情報一覧とコース情報一覧のコンバート処理
-    List<CourseDetail> courseDetails = converter.createCourseDetails(studentsCourses, courses);
+    List<CourseDetail> courseDetails = converter.createCourseDetails(studentsCoursesDetails,
+        courses);
     //受講生情報一覧と受講コース情報一覧をコンバート処理してリターン
     return converter.createStudentDetails(students, courseDetails);
   }
@@ -66,8 +74,13 @@ public class StudentService {
     Student student = repository.searchStudentById(studentId);
     List<Course> courses = repository.searchCourses();
     List<StudentsCourses> studentsCourses = repository.searchStudentsCourses();
+    List<CourseStatus> courseStatuses = repository.searchCourseStatuses();
+    //受講情報一覧と受講状態一覧のコンバート処理
+    List<StudentsCoursesDetail> studentsCoursesDetails = converter.createStudentsCoursesDetail(
+        studentsCourses, courseStatuses);
     //受講情報一覧とコース情報一覧のコンバート処理
-    List<CourseDetail> courseDetails = converter.createCourseDetails(studentsCourses, courses);
+    List<CourseDetail> courseDetails = converter.createCourseDetails(studentsCoursesDetails,
+        courses);
     //受講生情報一覧と受講コース情報一覧をコンバート処理してリターン
     return converter.createStudentDetail(student, courseDetails);
   }
@@ -89,8 +102,13 @@ public class StudentService {
         isDeleted);
     List<Course> courses = repository.searchCourses();
     List<StudentsCourses> studentsCourses = repository.searchFilterStudentsCourses(courseId);
+    List<CourseStatus> courseStatuses = repository.searchCourseStatuses();
+    //受講情報一覧と受講状態一覧のコンバート処理
+    List<StudentsCoursesDetail> studentsCoursesDetails = converter.createStudentsCoursesDetail(
+        studentsCourses, courseStatuses);
     //受講情報一覧とコース情報一覧のコンバート処理
-    List<CourseDetail> courseDetails = converter.createCourseDetails(studentsCourses, courses);
+    List<CourseDetail> courseDetails = converter.createCourseDetails(studentsCoursesDetails,
+        courses);
     //受講生情報一覧と受講コース情報一覧をコンバート処理してリターン
     return converter.createStudentDetails(students, courseDetails);
   }
@@ -148,7 +166,8 @@ public class StudentService {
     LocalDate expectedCompletionDate = startDate.plusYears(1);
     for (CourseDetail courseDetail : courseDetails) {
       //引数のオブジェクトからデータをset
-      StudentsCourses studentsCourses = courseDetail.getStudentsCourses();
+      StudentsCourses studentsCourses = courseDetail.getStudentsCoursesDetail()
+          .getStudentsCourses();
       //受講生IDをset
       studentsCourses.setStudentId(studentId);
       //開始日をset
@@ -157,6 +176,15 @@ public class StudentService {
       studentsCourses.setExpectedCompletionDate(Date.valueOf(expectedCompletionDate));
       //students_coursesテーブルに追加
       repository.insertStudentCourse(studentsCourses);
+      //自動採番のidを取得
+      int studentCoursesId = studentsCourses.getId();
+
+      //受講状態の登録処理
+      //students_coursesテーブルのidと受講状態(仮申込)を登録用オブジェクトにset
+      CourseStatus courseStatus = new CourseStatus(studentCoursesId,
+          CourseStatusType.PROVISIONAL.getLabel());
+      //登録処理
+      repository.insertCourseStatus(courseStatus);
     }
     return studentDetail;
   }
@@ -174,10 +202,15 @@ public class StudentService {
     repository.updateStudent(student);
     //引数から受講コース情報をオブジェクトにセット
     List<CourseDetail> courseDetails = studentDetail.getCourseDetail();
-    //受講コース情報を元に受講情報を更新する処理
+    //受講コース情報を元に受講情報と受講状態を更新する処理
     for (CourseDetail courseDetail : courseDetails) {
-      StudentsCourses studentsCourses = courseDetail.getStudentsCourses();
+      //受講情報の更新
+      StudentsCourses studentsCourses = courseDetail.getStudentsCoursesDetail()
+          .getStudentsCourses();
       repository.updateStudentCourses(studentsCourses);
+      //受講状態の更新
+      CourseStatus courseStatus = courseDetail.getStudentsCoursesDetail().getCourseStatus();
+      repository.updateCourseStatuses(courseStatus);
     }
   }
 

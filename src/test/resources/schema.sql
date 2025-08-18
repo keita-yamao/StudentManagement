@@ -27,3 +27,9 @@ CREATE TABLE IF NOT EXISTS courses
   course VARCHAR(100) NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS course_statuses
+(
+id INT AUTO_INCREMENT PRIMARY KEY,
+students_courses_id INT NOT NULL,
+status VARCHAR(5) NOT NULL
+);
