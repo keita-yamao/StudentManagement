@@ -49,7 +49,7 @@ jobs:
           host: ${{ env.EC2_HOST }}
           username: ${{ env.EC2_USER }}
           key: ${{ secrets.AWS_EC2_PRIVATE_KEY }}
-          env: DEST_PATH
+          envs: DEST_PATH
           script: |
             sudo yum update -y
             if [ -f /etc/systemd/system/StudentManagement.service ]; then
