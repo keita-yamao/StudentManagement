@@ -49,7 +49,7 @@ jobs:
           host: ${{ env.EC2_HOST }}
           username: ${{ env.EC2_USER }}
           key: ${{ secrets.AWS_EC2_PRIVATE_KEY }}
-          env: DEST_PATH
+          envs: DEST_PATH
           script: |
             sudo yum update -y
             if [ -f /etc/systemd/system/StudentManagement.service ]; then
@@ -74,7 +74,7 @@ jobs:
             fi
             
             sudo systemctl daemon-reload
-            if sudo systemctl status StudentManagement 2>&1 \ grep "Active: active (running)" ; then
+            if sudo systemctl status StudentManagement 2>&1 | grep "Active: active (running)" ; then
               sudo systemctl restart StudentManagement
             else
               sudo systemctl start StudentManagement
