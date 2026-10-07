@@ -65,25 +65,6 @@ erDiagram
     }
 ```
 
-## コンポーネント図
-```mermaid
-graph TD
-    Client[クライアント / Swagger UI] -->|HTTP Request / JSON| Controller[StudentController<br>・リクエスト受付<br>・グループ化バリデーション<br>・レスポンス生成]
-    
-    Controller -->|DTO / パラメータ| Service[StudentService<br>・ビジネスロジック<br>・トランザクション管理 @Transactional<br>・Entity - Domain 変換]
-    
-    Service -->|Entity| Repository[StudentRepository<br>・MyBatis @Mapper<br>・SQL実行]
-    
-    Repository -->|SQL| DB[(Database<br>students / courses /<br>students_courses / course_statuses)]
-
-    subgraph DomainModels [Domain Models]
-        SD[StudentDetail<br>受講生 + コース情報]
-        CD[CourseDetail<br>コース + ステータス情報]
-    end
-
-    Service -.-> DomainModels
-```
-
 ## 代表的な処理フロー（データ登録のシーケンス図）
 受講生登録（POST /registerStudent）処理を例にした、レイヤー間の具体的なコール順序とデータの流れです。
 
