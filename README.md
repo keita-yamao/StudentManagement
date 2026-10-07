@@ -26,6 +26,18 @@
 * グループ化バリデーション（新規登録用 `RegisterGroup` / 更新用 `UpdateGroup`）の適用
 * API 仕様可視化のための OpenAPI (Swagger UI) の導入
 
+## 技術スタック & バージョン
+
+* **Java**: 21
+* **Framework**: Spring Boot 3.3.2
+* **Build Tool**: Gradle (Dependency Management 1.1.6)
+* **Database / ORM**: MySQL (`mysql-connector-j`) / MyBatis 3.0.3
+* **Template Engine**: Thymeleaf
+* **API Documentation**: OpenAPI 3 (`springdoc-openapi` 2.5.0)
+* **Testing**: JUnit 5 (JUnit Platform) / Mockito / MyBatis Test 3.0.3 / Jakarta Validation / AssertJ / H2 Database 2.2.224
+* **Utilities**: Lombok, Apache Commons Lang 3.14.0
+* **Frontend**: HTML / CSS / JavaScript (Vanilla JS)
+
 ## ER図
 ```mermaid
 erDiagram
@@ -53,17 +65,51 @@ erDiagram
     }
 ```
 
-## 技術スタック & バージョン
+## コンポーネント図
+```mermaid
+graph TD
+    Client[クライアント / Swagger UI] -->|HTTP Request / JSON| Controller[StudentController<br>・リクエスト受付<br>・グループ化バリデーション<br>・レスポンス生成]
+    
+    Controller -->|DTO / パラメータ| Service[StudentService<br>・ビジネスロジック<br>・トランザクション管理 @Transactional<br>・Entity - Domain 変換]
+    
+    Service -->|Entity| Repository[StudentRepository<br>・MyBatis @Mapper<br>・SQL実行]
+    
+    Repository -->|SQL| DB[(Database<br>students / courses /<br>students_courses / course_statuses)]
 
-* **Java**: 21
-* **Framework**: Spring Boot 3.3.2
-* **Build Tool**: Gradle (Dependency Management 1.1.6)
-* **Database / ORM**: MySQL (`mysql-connector-j`) / MyBatis 3.0.3
-* **Template Engine**: Thymeleaf
-* **API Documentation**: OpenAPI 3 (`springdoc-openapi` 2.5.0)
-* **Testing**: JUnit 5 (JUnit Platform) / Mockito / MyBatis Test 3.0.3 / Jakarta Validation / AssertJ / H2 Database 2.2.224
-* **Utilities**: Lombok, Apache Commons Lang 3.14.0
-* **Frontend**: HTML / CSS / JavaScript (Vanilla JS)
+    subgraph DomainModels [Domain Models]
+        SD[StudentDetail<br>受講生 + コース情報]
+        CD[CourseDetail<br>コース + ステータス情報]
+    end
+
+    Service -.-> DomainModels
+```
+
+## 代表的な処理フロー（データ登録のシーケンス図）
+受講生登録（POST /registerStudent）処理を例にした、レイヤー間の具体的なコール順序とデータの流れです。
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Client as クライアント
+    participant C as StudentController
+    participant S as StudentService
+    participant R as StudentRepository
+    participant DB as Database
+
+    Client->>C: POST /registerStudent (StudentDetail)
+    Note over C: @Valid による相関バリデーション
+    C->>S: addStudent(StudentDetail)
+    Note over S: @Transactional 開始
+    S->>R: insertStudent(Student)
+    R->>DB: INSERT INTO students
+    S->>R: insertStudentCourse(StudentsCourses)
+    R->>DB: INSERT INTO students_courses
+    S->>R: insertCourseStatus(CourseStatus)
+    R->>DB: INSERT INTO course_statuses
+    Note over S: トランザクション コミット
+    S-->>C: 登録結果 (StudentDetail)
+    C-->>Client: 200 OK (ResponseRegisterStudent)
+```
 
 ## セットアップ & 実行方法
 
