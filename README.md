@@ -1,6 +1,6 @@
 # Student Management System
 
-プログラミングスクール（RaiseTech）の課題成果物として開発した、受講生情報およびコース申し込み状況を管理・操作するための RESTful API Web アプリケーションです。
+受講生情報およびコース申し込み状況を管理・操作するための RESTful API Web アプリケーションです。
 
 ## 主な機能
 
