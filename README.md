@@ -26,7 +26,32 @@
 * グループ化バリデーション（新規登録用 `RegisterGroup` / 更新用 `UpdateGroup`）の適用
 * API 仕様可視化のための OpenAPI (Swagger UI) の導入
 
+## ER図
+```mermaid
+erDiagram
+    students ||--o{ students_courses : "1つの受講生情報は複数の受講コース情報を持つ"
+    courses ||--o{ students_courses : "1つのコースは複数の受講コース情報に割り当てられる"
+    students_courses ||--o{ course_statuses : "1つの受講コース情報は複数のステータス履歴/状態を持つ"
 
+    students {
+        int student_id PK "受講生ID"
+    }
+
+    courses {
+        int course_id PK "コースID"
+    }
+
+    students_courses {
+        int id PK "受講コース管理ID"
+        int student_id FK "受講生ID (fk_student_id)"
+        int course_id FK "コースID (fk_course_id)"
+    }
+
+    course_statuses {
+        int id PK "ステータス管理ID"
+        int students_courses_id FK "受講コース管理ID (fk_students_courses_id)"
+    }
+```
 
 ## 技術スタック & バージョン
 
